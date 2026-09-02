@@ -6,7 +6,7 @@
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript (Single-Page Application Architecture)
+- **Frontend**: React
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB with Mongoose (includes automatic memory-store fallback during local development if MongoDB service is offline)
 - **AI Service Abstraction**: Multi-provider support for Google Gemini API, OpenAI API, and an intelligent rule-based Mock fallback provider
