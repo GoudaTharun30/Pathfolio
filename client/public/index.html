@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-card-style="clean">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pathfolio — Full-Stack Career & Portfolio Platform</title>
+  <meta name="description" content="Build your software engineering career, follow personalized roadmaps, complete projects, create resumes and portfolios, and receive AI career guidance.">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/templates.css">
+</head>
+<body>
+
+  <!-- Background Media & Overlay Layer -->
+  <div id="pathfolio-bg-container" class="pathfolio-bg-container">
+    <video id="pathfolio-live-wallpaper" class="pathfolio-live-wallpaper" autoplay loop muted playsinline style="display: none;"></video>
+    <div id="pathfolio-custom-bg" class="pathfolio-custom-bg"></div>
+    <div id="pathfolio-bg-overlay" class="pathfolio-bg-overlay"></div>
+  </div>
+
+  <!-- Toast Notification Root -->
+  <div id="toast-container"></div>
+
+  <!-- Modal Dialog Root -->
+  <div id="modal-root" class="modal-overlay">
+    <div class="modal-content" id="modal-body"></div>
+  </div>
+
+  <!-- Container for Customize Theme Sliding Panel Drawer -->
+  <div id="customize-drawer-container"></div>
+
+  <!-- Public Landing Header (Visible when unauthenticated) -->
+  <header id="public-header" class="public-header">
+    <div class="container nav-container">
+      <a href="#" class="logo" onclick="app.navigate('landing')">
+        <i class="fa-solid fa-compass"></i> Pathfolio<span>.</span>
+      </a>
+      <ul class="nav-links" id="public-nav-links">
+        <li><a href="#home" onclick="app.navigate('landing')">Home</a></li>
+        <li><a href="#features" onclick="app.scrollToSection('features')">Features</a></li>
+        <li><a href="#how-it-works" onclick="app.scrollToSection('how-it-works')">How It Works</a></li>
+        <li><a href="#faq" onclick="app.scrollToSection('faq')">FAQ</a></li>
+        <li>
+          <button class="btn btn-secondary btn-sm" onclick="app.toggleThemeMode()" title="Toggle Light/Dark Mode">
+            <i class="fa-solid fa-circle-half-stroke"></i> Mode
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-outline btn-sm" onclick="app.openCustomizeTheme()" title="Customize Workspace Theme">
+            <i class="fa-solid fa-palette"></i> Customize
+          </button>
+        </li>
+        <li><button class="btn btn-outline btn-sm" onclick="app.navigate('login')">Login</button></li>
+        <li><button class="btn btn-primary btn-sm" onclick="app.navigate('register')">Sign Up</button></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="app.toggleMobileNav()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Shell -->
+  <div id="app-shell" class="app-container" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo" onclick="app.navigate('dashboard')">
+          <i class="fa-solid fa-compass"></i> Pathfolio<span>.</span>
+        </a>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item" id="nav-dashboard">
+          <a href="#" onclick="app.navigate('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</a>
+        </li>
+        <li class="sidebar-item" id="nav-profile">
+          <a href="#" onclick="app.navigate('profile')"><i class="fa-solid fa-user-gear"></i> My Profile</a>
+        </li>
+        <li class="sidebar-item" id="nav-roadmaps">
+          <a href="#" onclick="app.navigate('roadmaps')"><i class="fa-solid fa-map-location-dot"></i> Career Roadmaps</a>
+        </li>
+        <li class="sidebar-item" id="nav-learning">
+          <a href="#" onclick="app.navigate('learning')"><i class="fa-solid fa-list-check"></i> Learning Planner</a>
+        </li>
+        <li class="sidebar-item" id="nav-projects">
+          <a href="#" onclick="app.navigate('projects')"><i class="fa-solid fa-rocket"></i> Recommended Projects</a>
+        </li>
+        <li class="sidebar-item" id="nav-resume">
+          <a href="#" onclick="app.navigate('resume')"><i class="fa-solid fa-file-invoice"></i> Resume Builder</a>
+        </li>
+        <li class="sidebar-item" id="nav-portfolio">
+          <a href="#" onclick="app.navigate('portfolio')"><i class="fa-solid fa-laptop-code"></i> Portfolio Builder</a>
+        </li>
+      </ul>
+      <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <button class="btn btn-secondary btn-block btn-sm" onclick="app.openCustomizeTheme()">
+          <i class="fa-solid fa-palette"></i> Customize Theme
+        </button>
+        <button class="btn btn-outline btn-block btn-sm" onclick="app.logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="hamburger-btn" onclick="app.toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <span class="page-title" id="page-title-heading">Dashboard</span>
+        </div>
+        <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
+          <button class="btn btn-secondary btn-sm" onclick="app.toggleThemeMode()" title="Toggle Light/Dark Mode">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="app.openCustomizeTheme()" title="Customize Workspace Theme">
+            <i class="fa-solid fa-palette"></i> Theme
+          </button>
+          <div class="user-profile-badge" onclick="app.navigate('profile')">
+            <div class="user-avatar" id="header-user-avatar">U</div>
+            <span id="header-user-name" style="font-size: 0.9rem; font-weight: 600;">User</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-area" id="main-content">
+        <!-- Dynamic View Content Loads Here -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Landing & Auth Page Viewport Container (for unauthenticated pages) -->
+  <div id="public-viewport"></div>
+
+  <!-- Floating AI Assistant Chat Container -->
+  <div id="floating-ai-container" style="display: none;">
+    <button class="floating-ai-trigger" onclick="app.toggleAiChat()" title="Ask Pathfolio AI Assistant">
+      <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <div class="ai-chat-window" id="ai-chat-window">
+      <div class="ai-chat-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-robot" style="color: var(--primary);"></i>
+          <strong>Pathfolio AI Assistant</strong>
+        </div>
+        <button style="background: none; border: none; color: var(--text-muted); cursor: pointer;" onclick="app.toggleAiChat()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="ai-chat-messages" id="ai-chat-messages">
+        <div class="chat-bubble chat-bubble-ai">
+          Hi! I am your AI Career Mentor. Ask me anything about skills, career roadmaps, resume tips, or learning steps!
+        </div>
+      </div>
+      <div class="ai-chat-input-area">
+        <input type="text" id="ai-chat-input" class="form-control" placeholder="Ask career question..." onkeypress="if(event.key==='Enter') app.sendAiMessage()">
+        <button class="btn btn-primary btn-sm" onclick="app.sendAiMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend JavaScript Code Modules -->
+  <script src="/js/services/api.js"></script>
+  <script src="/js/utils/themeManager.js"></script>
+  <script src="/js/components/CustomizeTheme.js"></script>
+  <script src="/js/utils/templateRenderers.js"></script>
+  <script src="/js/views/LandingView.js"></script>
+  <script src="/js/views/AuthView.js"></script>
+  <script src="/js/views/DashboardView.js"></script>
+  <script src="/js/views/ProfileView.js"></script>
+  <script src="/js/views/RoadmapsView.js"></script>
+  <script src="/js/views/RoadmapDetailView.js"></script>
+  <script src="/js/views/LearningPlannerView.js"></script>
+  <script src="/js/views/ProjectsView.js"></script>
+  <script src="/js/views/ResumeBuilderView.js"></script>
+  <script src="/js/views/PortfolioBuilderView.js"></script>
+  <script src="/js/app.js"></script>
+
+</body>
+</html>
