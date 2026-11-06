@@ -25,7 +25,13 @@ npm install
 Create or update `.env`:
 ```env
 PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/pathfolio
+
+# MongoDB Atlas Cloud Database (Recommended):
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-host>/pathfolio?retryWrites=true&w=majority
+
+# Local MongoDB (Alternative for offline local development):
+# MONGODB_URI=mongodb://127.0.0.1:27017/pathfolio
+
 JWT_SECRET=pathfolio_super_secret_jwt_key_2026
 
 # AI Provider Options: gemini | openai | mock
@@ -34,11 +40,18 @@ GEMINI_API_KEY=your_gemini_key_here
 OPENAI_API_KEY=your_openai_key_here
 ```
 
-### 3. Start Application
+### 3. Verify Database Connection
+```bash
+npm test
+```
+(Or run `npm run seed` to populate initial roadmaps and project recommendations).
+
+### 4. Start Application
 ```bash
 npm start
 ```
 Open **`http://localhost:5000`** in your browser.
+
 
 ---
 

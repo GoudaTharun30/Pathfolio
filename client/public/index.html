@@ -57,8 +57,8 @@
             <i class="fa-solid fa-palette"></i> Customize
           </button>
         </li>
-        <li><button class="btn btn-outline btn-sm" onclick="app.navigate('login')">Login</button></li>
-        <li><button class="btn btn-primary btn-sm" onclick="app.navigate('register')">Sign Up</button></li>
+        <li><button class="btn btn-outline btn-sm" onclick="app.openSignIn()">Login</button></li>
+        <li><button class="btn btn-primary btn-sm" onclick="app.openSignUp()">Sign Up</button></li>
       </ul>
       <button class="mobile-menu-btn" onclick="app.toggleMobileNav()">
         <i class="fa-solid fa-bars"></i>
@@ -124,6 +124,7 @@
           <button class="btn btn-outline btn-sm" onclick="app.openCustomizeTheme()" title="Customize Workspace Theme">
             <i class="fa-solid fa-palette"></i> Theme
           </button>
+          <div id="clerk-user-button" style="display: flex; align-items: center;"></div>
           <div class="user-profile-badge" onclick="app.navigate('profile')">
             <div class="user-avatar" id="header-user-avatar">U</div>
             <span id="header-user-name" style="font-size: 0.9rem; font-weight: 600;">User</span>
@@ -169,6 +170,15 @@
       </div>
     </div>
   </div>
+
+  <!-- Clerk Browser SDK with Publishable Key -->
+  <script 
+    async 
+    crossorigin="anonymous" 
+    data-clerk-publishable-key="pk_test_dHJ1c3RlZC1lZWwtNTQ4MS5jbGVyay5hY2NvdW50cy5kZXYk" 
+    src="https://trusted-eel-5481.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" 
+    type="text/javascript">
+  </script>
 
   <!-- Frontend JavaScript Code Modules -->
   <script src="/js/services/api.js"></script>

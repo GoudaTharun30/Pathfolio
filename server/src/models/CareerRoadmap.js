@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const resourceSchema = new mongoose.Schema({
+  title: { type: String },
+  type: { type: String },
+  url: { type: String }
+}, { _id: false });
+
 const topicSchema = new mongoose.Schema({
   id: { type: String, required: true },
   title: { type: String, required: true },
@@ -15,7 +21,7 @@ const topicSchema = new mongoose.Schema({
   prerequisites: [{ type: String }],
   skills: [{ type: String }],
   concepts: [{ type: String }],
-  resources: [{ title: String, type: String, url: String }],
+  resources: [resourceSchema],
   practiceIdeas: [{ type: String }]
 });
 
@@ -41,11 +47,8 @@ const careerRoadmapSchema = new mongoose.Schema({
     skills: [String]
   }],
   interviewPreparation: [{ type: String }],
-  recommendedResources: [{
-    title: String,
-    type: String,
-    url: String
-  }]
+  recommendedResources: [resourceSchema]
 });
 
 module.exports = mongoose.model('CareerRoadmap', careerRoadmapSchema);
+

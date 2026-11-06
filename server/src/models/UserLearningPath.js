@@ -6,16 +6,17 @@ const pathTopicSchema = new mongoose.Schema({
   importance: { type: String, default: 'essential' },
   estimatedHours: { type: Number, default: 4 },
   completed: { type: Boolean, default: false }
-});
+}, { _id: false });
 
 const weekScheduleSchema = new mongoose.Schema({
   weekNumber: { type: Number, required: true },
   monthNumber: { type: Number, required: true },
   title: { type: String, required: true },
   topics: [pathTopicSchema]
-});
+}, { _id: false });
 
 const userLearningPathSchema = new mongoose.Schema({
+  _id: { type: String },
   userId: { type: String, required: true },
   roadmapSlug: { type: String, required: true },
   roadmapTitle: { type: String, required: true },
@@ -31,3 +32,4 @@ const userLearningPathSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('UserLearningPath', userLearningPathSchema);
+

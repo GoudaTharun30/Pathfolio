@@ -3,19 +3,34 @@
  */
 const API = {
   getToken() {
+    if (window.Clerk && window.Clerk.session) {
+      // If clerk session token is cached synchronously
+      return window.__clerkToken || localStorage.getItem('pathfolio_token');
+    }
     return localStorage.getItem('pathfolio_token');
   },
 
   setToken(token) {
+    window.__clerkToken = token;
     localStorage.setItem('pathfolio_token', token);
   },
 
   removeToken() {
+    window.__clerkToken = null;
     localStorage.removeItem('pathfolio_token');
   },
 
   async request(endpoint, options = {}) {
-    const token = this.getToken();
+    let token = this.getToken();
+    if (window.Clerk && window.Clerk.session) {
+      try {
+        token = await window.Clerk.session.getToken();
+        window.__clerkToken = token;
+      } catch (e) {
+        console.warn('Could not retrieve Clerk session token:', e);
+      }
+    }
+
     const headers = {
       'Content-Type': 'application/json',
       ...(options.headers || {})
@@ -36,7 +51,10 @@ const API = {
       if (!response.ok) {
         if (response.status === 401 && !endpoint.includes('/auth/')) {
           this.removeToken();
-          window.location.reload();
+          if (window.app && typeof window.app.navigate === 'function') {
+            window.app.currentUser = null;
+            window.app.navigate('login');
+          }
         }
         throw new Error(data.error || 'API Request failed');
       }

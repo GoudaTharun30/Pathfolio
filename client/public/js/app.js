@@ -6,32 +6,239 @@ const app = {
   routeParams: {},
   currentUser: null,
 
+  /** Returns a Clerk appearance object that matches Pathfolio's current theme */
+  getClerkAppearance() {
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    return {
+      layout: {
+        socialButtonsVariant: 'blockButton',
+        logoPlacement: 'none'
+      },
+      variables: {
+        colorPrimary: '#6366f1',
+        colorPrimaryHover: '#4f46e5',
+        colorBackground: isDark ? '#151d30' : '#ffffff',
+        colorInputBackground: isDark ? '#0f172a' : '#f8fafc',
+        colorInputText: isDark ? '#f8fafc' : '#0f172a',
+        colorText: isDark ? '#f8fafc' : '#0f172a',
+        colorTextSecondary: isDark ? '#94a3b8' : '#475569',
+        colorNeutral: isDark ? '#94a3b8' : '#475569',
+        colorDanger: '#ef4444',
+        colorSuccess: '#10b981',
+        colorAlphaShade: isDark ? 'white' : 'black',
+        borderRadius: '10px',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        fontSize: '15px',
+        spacingUnit: '0.95rem'
+      },
+      elements: {
+        card: {
+          background: isDark ? '#151d30' : '#ffffff',
+          border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+          boxShadow: isDark ? '0 10px 25px rgba(0,0,0,0.5)' : '0 10px 25px rgba(0,0,0,0.12)',
+          borderRadius: '16px'
+        },
+        headerTitle: {
+          fontFamily: 'Outfit, sans-serif',
+          fontWeight: '700',
+          fontSize: '1.5rem',
+          color: isDark ? '#f8fafc' : '#0f172a'
+        },
+        headerSubtitle: {
+          color: isDark ? '#94a3b8' : '#475569'
+        },
+        formButtonPrimary: {
+          background: '#6366f1',
+          color: '#ffffff',
+          borderRadius: '8px',
+          fontWeight: '600',
+          '&:hover': { background: '#4f46e5' }
+        },
+        formFieldInput: {
+          background: isDark ? '#0f172a' : '#f8fafc',
+          border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+          color: isDark ? '#f8fafc' : '#0f172a',
+          borderRadius: '8px',
+          '&:focus': { borderColor: '#6366f1' }
+        },
+        formFieldLabel: {
+          color: isDark ? '#94a3b8' : '#475569',
+          fontWeight: '500'
+        },
+        dividerRow: {
+          '& > div': { borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0' }
+        },
+        dividerText: {
+          color: isDark ? '#64748b' : '#94a3b8'
+        },
+        footerActionText: {
+          color: isDark ? '#94a3b8' : '#475569'
+        },
+        footerActionLink: {
+          color: '#6366f1',
+          '&:hover': { color: '#4f46e5' }
+        },
+        identityPreviewText: {
+          color: isDark ? '#f8fafc' : '#0f172a'
+        },
+        otpCodeFieldInput: {
+          background: isDark ? '#0f172a' : '#f8fafc',
+          border: isDark ? '1px solid rgba(255,255,255,0.15)' : '1px solid #e2e8f0',
+          color: isDark ? '#f8fafc' : '#0f172a'
+        },
+        socialButtonsBlockButton: {
+          background: isDark ? '#1e2942' : '#f1f5f9',
+          border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+          color: isDark ? '#f8fafc' : '#0f172a',
+          borderRadius: '8px',
+          '&:hover': { background: isDark ? '#263452' : '#e2e8f0' }
+        },
+        socialButtonsBlockButtonText: {
+          color: isDark ? '#f8fafc' : '#0f172a',
+          fontWeight: '500'
+        }
+      }
+    };
+  },
+
   async init() {
     // Initialize Theme System & Customs
     if (window.themeManager) {
       themeManager.init();
     }
 
+    // Initialize Clerk JS if available
+    await this.initClerk();
+
     const initialRoute = this.routeFromLocation();
-    // Check if token exists
-    const token = API.getToken();
-    if (token) {
+
+    // Check if user is authenticated via Clerk or legacy token
+    if (window.Clerk && window.Clerk.user) {
+      const clerkUser = window.Clerk.user;
+      const primaryEmail = clerkUser.primaryEmailAddress ? clerkUser.primaryEmailAddress.emailAddress : '';
+      const fullName = clerkUser.fullName || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'User';
+
+      this.currentUser = {
+        id: clerkUser.id,
+        name: fullName,
+        email: primaryEmail,
+        imageUrl: clerkUser.imageUrl
+      };
+
       try {
-        const data = await API.request('/auth/me');
-        this.currentUser = data.user;
-        this.currentRoute = initialRoute.route === 'landing' ? 'dashboard' : initialRoute.route;
-        this.routeParams = initialRoute.params;
+        const token = await window.Clerk.session.getToken();
+        API.setToken(token);
       } catch (e) {
-        API.removeToken();
-        this.currentUser = null;
-        this.currentRoute = 'landing';
+        console.warn('Error fetching Clerk token at init:', e);
       }
+
+      this.currentRoute = (initialRoute.route === 'landing' || initialRoute.route === 'login' || initialRoute.route === 'register') ? 'dashboard' : initialRoute.route;
+      this.routeParams = initialRoute.params;
     } else {
-      this.currentRoute = 'landing';
+      const token = API.getToken();
+      if (token) {
+        try {
+          const data = await API.request('/auth/me');
+          this.currentUser = data.user;
+          this.currentRoute = (initialRoute.route === 'landing' || initialRoute.route === 'login' || initialRoute.route === 'register') ? 'dashboard' : initialRoute.route;
+          this.routeParams = initialRoute.params;
+        } catch (e) {
+          API.removeToken();
+          this.currentUser = null;
+          this.currentRoute = 'landing';
+        }
+      } else {
+        this.currentRoute = (initialRoute.route === 'dashboard') ? 'landing' : initialRoute.route;
+      }
     }
 
     this.updateShellUI();
     await this.renderCurrentView();
+  },
+
+  async initClerk() {
+    try {
+      // Priority 1: key already set as global variable
+      let publishableKey = window.CLERK_PUBLISHABLE_KEY;
+
+      // Priority 2: read from the Clerk script tag's data attribute (most reliable)
+      if (!publishableKey) {
+        const clerkScript = document.querySelector('script[data-clerk-publishable-key]');
+        if (clerkScript) {
+          publishableKey = clerkScript.getAttribute('data-clerk-publishable-key');
+        }
+      }
+
+      // Priority 3: fetch from backend /api/config
+      if (!publishableKey) {
+        try {
+          const cfg = await fetch('/api/config').then(r => r.json());
+          publishableKey = cfg.clerkPublishableKey;
+        } catch (e) {
+          console.warn('Could not fetch Clerk publishable key from server:', e);
+        }
+      }
+
+      if (!publishableKey) {
+        console.info('Clerk Publishable Key not configured; proceeding in standard mode.');
+        return;
+      }
+
+      // Wait up to 6 seconds for the Clerk browser bundle script to define window.Clerk or window.ClerkJS
+      const waitForClerkGlobal = () => new Promise(resolve => {
+        if (window.Clerk || window.ClerkJS) return resolve();
+        let checks = 0;
+        const interval = setInterval(() => {
+          checks++;
+          if (window.Clerk || window.ClerkJS || checks > 60) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 100);
+      });
+
+      await waitForClerkGlobal();
+
+      if (window.Clerk) {
+        if (!window.Clerk.loaded && typeof window.Clerk.load === 'function') {
+          await window.Clerk.load({
+            publishableKey
+          });
+        }
+      } else if (window.ClerkJS) {
+        window.Clerk = new window.ClerkJS(publishableKey);
+        await window.Clerk.load();
+      }
+
+      if (window.Clerk && typeof window.Clerk.addListener === 'function') {
+        // Listen to auth state changes from Clerk
+        window.Clerk.addListener(async ({ user, session }) => {
+          if (user && session) {
+            const token = await session.getToken();
+            API.setToken(token);
+            const fullName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+            app.currentUser = {
+              id: user.id,
+              name: fullName,
+              email: user.primaryEmailAddress ? user.primaryEmailAddress.emailAddress : '',
+              imageUrl: user.imageUrl
+            };
+            if (app.currentRoute === 'landing' || app.currentRoute === 'login' || app.currentRoute === 'register') {
+              app.navigate('dashboard');
+            } else {
+              app.updateShellUI();
+            }
+          } else if (app.currentUser && app.currentUser.id && String(app.currentUser.id).startsWith('user_')) {
+            // Only sign out if the user was actively authenticated via Clerk (Clerk IDs start with user_)
+            API.removeToken();
+            app.currentUser = null;
+            app.navigate('landing');
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Clerk initialization error:', err);
+    }
   },
 
   updateShellUI() {
@@ -54,7 +261,20 @@ const app = {
       const nameEl = document.getElementById('header-user-name');
       const avatarEl = document.getElementById('header-user-avatar');
       if (nameEl) nameEl.textContent = this.currentUser.name || 'User';
-      if (avatarEl) avatarEl.textContent = (this.currentUser.name || 'U').charAt(0).toUpperCase();
+      if (avatarEl) {
+        if (this.currentUser.imageUrl) {
+          avatarEl.innerHTML = `<img src="${this.currentUser.imageUrl}" alt="User Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        } else {
+          avatarEl.textContent = (this.currentUser.name || 'U').charAt(0).toUpperCase();
+        }
+      }
+
+      // Mount Clerk UserButton if element exists
+      const clerkUserBtnContainer = document.getElementById('clerk-user-button');
+      if (clerkUserBtnContainer && window.Clerk && window.Clerk.user) {
+        clerkUserBtnContainer.innerHTML = '';
+        window.Clerk.mountUserButton(clerkUserBtnContainer);
+      }
 
       // Highlight active sidebar item
       document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
@@ -94,17 +314,36 @@ const app = {
   },
 
   routeFromLocation() {
-    const match = window.location.pathname.match(/^\/roadmaps\/([^/]+)$/);
-    return match ? { route: 'roadmap-detail', params: { slug: decodeURIComponent(match[1]) } } : { route: 'landing', params: {} };
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    const roadmapMatch = path.match(/^\/roadmaps\/([^/]+)$/);
+    if (roadmapMatch) {
+      return { route: 'roadmap-detail', params: { slug: decodeURIComponent(roadmapMatch[1]) } };
+    }
+
+    const validRoutes = [
+      'dashboard', 'profile', 'roadmaps', 'learning', 'projects', 'resume', 'portfolio', 'login', 'register'
+    ];
+    const cleanRoute = path.replace(/^\//, '');
+    if (validRoutes.includes(cleanRoute)) {
+      return { route: cleanRoute, params: {} };
+    }
+
+    return { route: 'landing', params: {} };
   },
 
   urlForRoute(route, params) {
-    return route === 'roadmap-detail' && params.slug ? `/roadmaps/${encodeURIComponent(params.slug)}` : '/';
+    if (route === 'roadmap-detail' && params.slug) {
+      return `/roadmaps/${encodeURIComponent(params.slug)}`;
+    }
+    if (route === 'landing') {
+      return '/';
+    }
+    return `/${route}`;
   },
 
   async restoreHistoryRoute() {
     const target = this.routeFromLocation();
-    this.currentRoute = this.currentUser && target.route === 'landing' ? 'dashboard' : target.route;
+    this.currentRoute = this.currentUser && (target.route === 'landing' || target.route === 'login' || target.route === 'register') ? 'dashboard' : target.route;
     this.routeParams = target.params;
     this.updateShellUI();
     await this.renderCurrentView();
@@ -119,10 +358,44 @@ const app = {
         publicViewport.innerHTML = LandingView.render();
         break;
       case 'login':
-        publicViewport.innerHTML = AuthView.renderLogin();
+        if (window.Clerk && typeof window.Clerk.mountSignIn === 'function') {
+          publicViewport.innerHTML = '<div class="container" style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;"><div id="clerk-signin-mount"></div></div>';
+          try {
+            const mountEl = document.getElementById('clerk-signin-mount');
+            if (mountEl) {
+              window.Clerk.mountSignIn(mountEl, {
+                afterSignInUrl: '/dashboard',
+                afterSignUpUrl: '/dashboard',
+                appearance: this.getClerkAppearance()
+              });
+            }
+          } catch (e) {
+            console.warn('Could not mount Clerk SignIn:', e);
+            publicViewport.innerHTML = AuthView.renderLogin();
+          }
+        } else {
+          publicViewport.innerHTML = AuthView.renderLogin();
+        }
         break;
       case 'register':
-        publicViewport.innerHTML = AuthView.renderRegister();
+        if (window.Clerk && typeof window.Clerk.mountSignUp === 'function') {
+          publicViewport.innerHTML = '<div class="container" style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;"><div id="clerk-signup-mount"></div></div>';
+          try {
+            const mountEl = document.getElementById('clerk-signup-mount');
+            if (mountEl) {
+              window.Clerk.mountSignUp(mountEl, {
+                afterSignInUrl: '/dashboard',
+                afterSignUpUrl: '/dashboard',
+                appearance: this.getClerkAppearance()
+              });
+            }
+          } catch (e) {
+            console.warn('Could not mount Clerk SignUp:', e);
+            publicViewport.innerHTML = AuthView.renderRegister();
+          }
+        } else {
+          publicViewport.innerHTML = AuthView.renderRegister();
+        }
         break;
       case 'dashboard':
         mainContent.innerHTML = await DashboardView.render();
@@ -195,7 +468,56 @@ const app = {
     }
   },
 
-  logout() {
+  async openSignIn() {
+    if (window.Clerk) {
+      try {
+        if (!window.Clerk.loaded && typeof window.Clerk.load === 'function') {
+          await window.Clerk.load();
+        }
+        if (typeof window.Clerk.openSignIn === 'function') {
+          window.Clerk.openSignIn({
+            afterSignInUrl: '/dashboard',
+            afterSignUpUrl: '/dashboard',
+            appearance: this.getClerkAppearance()
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('Error opening Clerk sign in modal:', err);
+      }
+    }
+    this.navigate('login');
+  },
+
+  async openSignUp() {
+    if (window.Clerk) {
+      try {
+        if (!window.Clerk.loaded && typeof window.Clerk.load === 'function') {
+          await window.Clerk.load();
+        }
+        if (typeof window.Clerk.openSignUp === 'function') {
+          window.Clerk.openSignUp({
+            afterSignInUrl: '/dashboard',
+            afterSignUpUrl: '/dashboard',
+            appearance: this.getClerkAppearance()
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('Error opening Clerk sign up modal:', err);
+      }
+    }
+    this.navigate('register');
+  },
+
+  async logout() {
+    if (window.Clerk && window.Clerk.session) {
+      try {
+        await window.Clerk.signOut();
+      } catch (e) {
+        console.warn('Clerk signOut error:', e);
+      }
+    }
     API.removeToken();
     this.currentUser = null;
     API.showToast('Logged out successfully.');
@@ -252,3 +574,6 @@ const app = {
 
 // Initialize App when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => app.init());
+
+// Handle browser navigation (back/forward)
+window.addEventListener('popstate', () => app.restoreHistoryRoute());

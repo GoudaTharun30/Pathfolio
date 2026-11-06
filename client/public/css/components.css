@@ -198,6 +198,39 @@ textarea.form-control {
   resize: vertical;
 }
 
+/* Native <select> — theme-aware dropdown list */
+select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+select.form-control option {
+  background-color: #151d30;
+  color: #f8fafc;
+  font-family: var(--font-primary);
+}
+
+select.form-control option:hover,
+select.form-control option:checked {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+[data-theme="light"] select.form-control {
+  color-scheme: light;
+}
+
+[data-theme="light"] select.form-control option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
 /* Toast Notifications */
 #toast-container {
   position: fixed;

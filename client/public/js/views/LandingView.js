@@ -17,7 +17,7 @@ const LandingView = {
             Create your resume and portfolio, discover the right career path, plan your learning, build meaningful projects, and get AI-powered career guidance — all in one place.
           </p>
           <div class="hero-ctas">
-            <button class="btn btn-primary btn-lg" onclick="app.navigate('register')">
+            <button class="btn btn-primary btn-lg" onclick="app.openSignUp()">
               <i class="fa-solid fa-rocket"></i> Get Started
             </button>
             <button class="btn btn-secondary btn-lg" onclick="app.scrollToSection('features')">
@@ -174,8 +174,8 @@ const LandingView = {
             <div class="footer-col">
               <h5>Account</h5>
               <ul class="footer-links">
-                <li><a href="#" onclick="app.navigate('login')">Login</a></li>
-                <li><a href="#" onclick="app.navigate('register')">Sign Up</a></li>
+                <li><a href="#" onclick="app.openSignIn(); return false;">Login</a></li>
+                <li><a href="#" onclick="app.openSignUp(); return false;">Sign Up</a></li>
               </ul>
             </div>
             <div class="footer-col">

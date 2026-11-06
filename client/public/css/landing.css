@@ -5,10 +5,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(8px);
+  background-color: var(--header-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 0;
+  transition: background-color var(--transition), border-color var(--transition);
 }
 
 .nav-container {
@@ -41,10 +43,11 @@
 .nav-links a {
   color: var(--text-muted);
   font-weight: 500;
+  transition: color var(--transition);
 }
 
 .nav-links a:hover {
-  color: #ffffff;
+  color: var(--primary);
 }
 
 .mobile-menu-btn {
@@ -60,7 +63,7 @@
 .hero-section {
   padding: 5rem 0 4rem;
   text-align: center;
-  background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15), transparent 70%);
+  background: radial-gradient(circle at 50% 20%, var(--primary-light), transparent 70%);
 }
 
 .hero-badge {
@@ -69,9 +72,9 @@
   gap: 0.5rem;
   padding: 0.4rem 1rem;
   background-color: var(--primary-light);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
-  color: #a5b4fc;
+  color: var(--primary);
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -109,9 +112,10 @@
 /* Features Grid */
 .features-section {
   padding: 5rem 0;
-  background-color: rgba(30, 41, 59, 0.4);
+  background-color: var(--bg-card-hover);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition);
 }
 
 .section-header {
@@ -211,8 +215,9 @@
 /* FAQ Accordion */
 .faq-section {
   padding: 5rem 0;
-  background-color: rgba(30, 41, 59, 0.4);
+  background-color: var(--bg-card-hover);
   border-top: 1px solid var(--border-color);
+  transition: background-color var(--transition);
 }
 
 .faq-accordion {
@@ -228,6 +233,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   overflow: hidden;
+  transition: background-color var(--transition), border-color var(--transition);
 }
 
 .faq-question {
@@ -262,11 +268,12 @@
 
 /* Footer */
 .public-footer {
-  background-color: #0b1120;
+  background-color: var(--bg-card);
   border-top: 1px solid var(--border-color);
   padding: 3rem 0 2rem;
   margin-top: auto;
   color: var(--text-subtle);
+  transition: background-color var(--transition), border-color var(--transition);
 }
 
 .footer-grid {
@@ -295,7 +302,7 @@
 }
 
 .footer-links a:hover {
-  color: #fff;
+  color: var(--primary);
 }
 
 /* Responsive */
@@ -311,7 +318,7 @@
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: var(--bg-dark);
+    background-color: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
     padding: 1.5rem;
   }

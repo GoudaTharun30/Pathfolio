@@ -11,7 +11,7 @@ const taskSchema = new mongoose.Schema({
 });
 
 const learningPlanSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  userId: { type: String, required: true, unique: true },
   roadmapSlug: { type: String, required: true },
   roadmapTitle: { type: String, required: true },
   tasks: [taskSchema],
