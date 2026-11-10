@@ -1370,7 +1370,10 @@ const projects = [
       features: ['Inventory stock alerts', 'Supplier order workflows', 'Role permissions (Admin, Manager, Staff)', 'Audit logs & analytics', 'Dockerized deployment'],
       prerequisites: ['Full Stack React & Node', 'TypeScript', 'SQL basics']
     }
-  )
+  ),
+
+  // 4 through 17. Comprehensive projects for all specialized career roadmaps
+  ...(require('./roadmapProjectsData').additionalProjects || [])
 ];
 
 module.exports = {

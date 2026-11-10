@@ -8,7 +8,59 @@ const app = {
 
   /** Returns a Clerk appearance object that matches Pathfolio's current theme */
   getClerkAppearance() {
+    const isPaper = document.body.classList.contains('theme-paper') || document.documentElement.getAttribute('data-theme-style') === 'paper';
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    if (isPaper) {
+      return {
+        layout: { socialButtonsVariant: 'blockButton', logoPlacement: 'none' },
+        variables: {
+          colorPrimary: '#171717',
+          colorPrimaryHover: '#333333',
+          colorBackground: '#FFFEFA',
+          colorInputBackground: '#F8F5EE',
+          colorInputText: '#171717',
+          colorText: '#171717',
+          colorTextSecondary: '#5C5852',
+          colorNeutral: '#77736C',
+          colorDanger: '#B3261E',
+          colorSuccess: '#3B7A38',
+          borderRadius: '12px',
+          fontFamily: "'Patrick Hand', 'Gaegu', cursive",
+          fontSize: '16px'
+        },
+        elements: {
+          card: {
+            background: '#FFFEFA',
+            border: '2.5px solid #171717',
+            boxShadow: '4px 6px 0px #171717',
+            borderRadius: '16px'
+          },
+          headerTitle: {
+            fontFamily: "'Patrick Hand', cursive",
+            fontWeight: '700',
+            fontSize: '1.6rem',
+            color: '#171717'
+          },
+          formButtonPrimary: {
+            background: '#171717',
+            color: '#FFFEFA',
+            border: '2px solid #171717',
+            borderRadius: '10px',
+            fontFamily: "'Patrick Hand', cursive",
+            fontSize: '1.1rem',
+            boxShadow: '2px 2px 0px #171717'
+          },
+          formFieldInput: {
+            background: '#FFFEFA',
+            border: '2px solid #171717',
+            color: '#171717',
+            borderRadius: '8px'
+          }
+        }
+      };
+    }
+
     return {
       layout: {
         socialButtonsVariant: 'blockButton',
@@ -105,6 +157,14 @@ const app = {
     // Initialize Theme System & Customs
     if (window.themeManager) {
       themeManager.init();
+    }
+
+    // Initialize Paper World Transitions and Doodles
+    if (window.paperTransitions) {
+      paperTransitions.init();
+    }
+    if (window.paperDecorations) {
+      paperDecorations.init();
     }
 
     // Initialize Clerk JS if available
@@ -304,13 +364,43 @@ const app = {
   },
 
   async navigate(route, params = {}) {
-    this.currentRoute = route;
-    this.routeParams = params;
-    const url = this.urlForRoute(route, params);
-    if (window.location.pathname !== url) window.history.pushState({ route, params }, '', url);
-    this.updateShellUI();
-    await this.renderCurrentView();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.paperTransitions && window.paperTransitions.isTransitioning) {
+      return; // Prevent overlapping transitions during rapid navigation
+    }
+
+    const titles = {
+      landing: 'Returning to Home...',
+      login: 'Opening Login Sheet...',
+      register: 'Opening Sign Up Sheet...',
+      dashboard: 'Turning to Dashboard...',
+      profile: 'Opening My Profile...',
+      roadmaps: 'Unfolding Career Roadmaps...',
+      'roadmap-detail': 'Opening Learning Journey...',
+      learning: 'Flipping to Learning Planner...',
+      projects: 'Viewing Recommended Projects...',
+      resume: 'Drafting Resume Sheet...',
+      portfolio: 'Opening Portfolio Pages...'
+    };
+    const label = titles[route] || 'Turning Page...';
+
+    const performNav = async () => {
+      this.currentRoute = route;
+      this.routeParams = params;
+      const url = this.urlForRoute(route, params);
+      if (window.location.pathname !== url) window.history.pushState({ route, params }, '', url);
+      this.updateShellUI();
+      await this.renderCurrentView();
+      if (window.paperDecorations && typeof paperDecorations.applyPageDecorations === 'function') {
+        paperDecorations.applyPageDecorations();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (window.paperTransitions) {
+      await paperTransitions.transition(performNav, label);
+    } else {
+      await performNav();
+    }
   },
 
   routeFromLocation() {
@@ -343,10 +433,35 @@ const app = {
 
   async restoreHistoryRoute() {
     const target = this.routeFromLocation();
-    this.currentRoute = this.currentUser && (target.route === 'landing' || target.route === 'login' || target.route === 'register') ? 'dashboard' : target.route;
-    this.routeParams = target.params;
-    this.updateShellUI();
-    await this.renderCurrentView();
+    const nextRoute = this.currentUser && (target.route === 'landing' || target.route === 'login' || target.route === 'register') ? 'dashboard' : target.route;
+    const titles = {
+      landing: 'Flipping to Home...',
+      dashboard: 'Turning to Dashboard...',
+      profile: 'Opening My Profile...',
+      roadmaps: 'Unfolding Roadmaps...',
+      'roadmap-detail': 'Opening Learning Journey...',
+      learning: 'Flipping to Learning Planner...',
+      projects: 'Viewing Recommended Projects...',
+      resume: 'Drafting Resume Sheet...',
+      portfolio: 'Opening Portfolio Pages...'
+    };
+    const label = titles[nextRoute] || 'Flipping Page...';
+
+    const performRestore = async () => {
+      this.currentRoute = nextRoute;
+      this.routeParams = target.params;
+      this.updateShellUI();
+      await this.renderCurrentView();
+      if (window.paperDecorations && typeof paperDecorations.applyPageDecorations === 'function') {
+        paperDecorations.applyPageDecorations();
+      }
+    };
+
+    if (window.paperTransitions) {
+      await paperTransitions.transition(performRestore, label);
+    } else {
+      await performRestore();
+    }
   },
 
   async renderCurrentView() {
@@ -356,6 +471,11 @@ const app = {
     switch (this.currentRoute) {
       case 'landing':
         publicViewport.innerHTML = LandingView.render();
+        setTimeout(() => {
+          if (window.paper3D && typeof paper3D.initHeroCanvas === 'function') {
+            paper3D.initHeroCanvas('landing-3d-canvas');
+          }
+        }, 50);
         break;
       case 'login':
         if (window.Clerk && typeof window.Clerk.mountSignIn === 'function') {
@@ -434,6 +554,9 @@ const app = {
   toggleThemeMode() {
     if (window.themeManager) {
       window.themeManager.toggleMode();
+      if (window.CustomizeTheme && CustomizeTheme.isOpen) {
+        CustomizeTheme.refresh();
+      }
     }
   },
 
@@ -526,7 +649,14 @@ const app = {
 
   closeModal() {
     const modal = document.getElementById('modal-root');
-    modal.classList.remove('active');
+    const modalBody = document.getElementById('modal-body');
+    if (window.paperTransitions && typeof paperTransitions.closeComponent === 'function') {
+      paperTransitions.closeComponent(modalBody, () => {
+        modal.classList.remove('active');
+      });
+    } else {
+      modal.classList.remove('active');
+    }
   },
 
   toggleAiChat() {
@@ -571,6 +701,8 @@ const app = {
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 };
+
+window.app = app;
 
 // Initialize App when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => app.init());

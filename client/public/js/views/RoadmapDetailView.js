@@ -437,6 +437,9 @@ const RoadmapDetailView = {
       </div>
     `;
 
+    if (window.paperTransitions && typeof paperTransitions.openComponent === 'function') {
+      paperTransitions.openComponent(modalBody);
+    }
     modal.classList.add('active');
   },
 
@@ -527,6 +530,9 @@ const RoadmapDetailView = {
       </div>
     `;
 
+    if (window.paperTransitions && typeof paperTransitions.openComponent === 'function') {
+      paperTransitions.openComponent(modalBody);
+    }
     modal.classList.add('active');
   }
 };

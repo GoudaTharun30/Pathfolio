@@ -9,7 +9,8 @@ const themeManager = {
   SAVED_THEMES_KEY: 'pathfolio_saved_themes',
 
   defaultConfig: {
-    mode: 'dark',               // 'light' | 'dark'
+    mode: 'light',              // 'light' | 'dark'
+    themeStyle: 'paper',        // 'paper' | 'original' (Paper World Sketchbook)
     bgType: 'default',          // 'default' | 'image' | 'wallpaper'
     bgImage: null,              // Data URL or URL string
     bgPosition: 'cover',        // 'cover' | 'contain' | 'center'
@@ -145,16 +146,59 @@ const themeManager = {
     this.updateConfig({ mode: newMode });
   },
 
+  setThemeStyle(newStyle) {
+    if (this.config.themeStyle === newStyle) return;
+    const oldStyle = this.config.themeStyle;
+    if (window.paperTransitions && typeof paperTransitions.transformTheme === 'function') {
+      return paperTransitions.transformTheme(() => {
+        this.updateConfig({ themeStyle: newStyle });
+        if (window.CustomizeTheme && CustomizeTheme.isOpen) CustomizeTheme.refresh();
+      }, oldStyle, newStyle);
+    } else {
+      this.updateConfig({ themeStyle: newStyle });
+      if (window.CustomizeTheme && CustomizeTheme.isOpen) CustomizeTheme.refresh();
+    }
+  },
+
+  toggleThemeStyle() {
+    const newStyle = this.config.themeStyle === 'paper' ? 'original' : 'paper';
+    this.setThemeStyle(newStyle);
+  },
+
+  isPaperWorld() {
+    return this.config?.themeStyle === 'paper';
+  },
+
   applyTheme() {
     const root = document.documentElement;
     const isDark = this.config.mode === 'dark';
+    const isPaper = this.config.themeStyle === 'paper';
 
-    // 1. Set mode & background attributes on root element
+    // 0. Toggle Paper World isolation root classes
+    if (isPaper) {
+      document.body.classList.add('theme-paper');
+      root.setAttribute('data-theme-style', 'paper');
+      if (window.paperDecorations && typeof paperDecorations.applyPageDecorations === 'function') {
+        paperDecorations.applyPageDecorations();
+      }
+    } else {
+      document.body.classList.remove('theme-paper');
+      root.setAttribute('data-theme-style', 'original');
+    }
+
+    // 1. Set mode & background attributes on root element and body
     const hasMediaBg = (this.config.bgType === 'image' && this.config.bgImage) || 
                        (this.config.bgType === 'wallpaper' && this.config.liveWallpaper && this.config.liveWallpaperEnabled);
     
     root.setAttribute('data-theme', this.config.mode);
     root.setAttribute('data-bg-active', hasMediaBg ? 'true' : 'false');
+    if (document.body) {
+      document.body.setAttribute('data-theme', this.config.mode);
+      document.body.setAttribute('data-bg-active', hasMediaBg ? 'true' : 'false');
+    }
+
+    // Targets to receive dynamic style updates
+    const targets = [root, document.body].filter(Boolean);
 
     // 2. Theme Colors & Component Transparency Calculation
     let alpha = this.config.cardTransparency ?? 0.6;
@@ -165,37 +209,128 @@ const themeManager = {
     const isGlassy = hasMediaBg || this.config.cardStyle === 'glass' || this.config.cardStyle === 'transparent' || alpha < 0.95;
 
     if (isDark) {
-      root.style.setProperty('--bg-dark', '#0b0f19');
-      root.style.setProperty('--bg-app', '#0b0f19');
-      root.style.setProperty('--bg-card', isGlassy ? `rgba(15, 23, 42, ${alpha})` : '#151d30');
-      root.style.setProperty('--bg-card-hover', isGlassy ? `rgba(30, 41, 66, ${Math.min(alpha + 0.2, 1)})` : '#1e2942');
-      root.style.setProperty('--bg-input', isGlassy ? `rgba(15, 23, 42, ${Math.max(alpha - 0.1, 0.05)})` : 'rgba(15, 23, 42, 0.7)');
-      root.style.setProperty('--border-color', isGlassy ? `rgba(255, 255, 255, ${Math.max(0.12, Math.min(0.35, alpha + 0.15))})` : 'rgba(255, 255, 255, 0.15)');
-      root.style.setProperty('--text-main', '#f8fafc');
-      root.style.setProperty('--text-muted', '#94a3b8');
-      root.style.setProperty('--text-subtle', '#64748b');
-      root.style.setProperty('--sidebar-bg', isGlassy ? `rgba(15, 23, 42, ${Math.min(alpha + 0.1, 0.95)})` : '#0f172a');
-      root.style.setProperty('--header-bg', isGlassy ? `rgba(15, 23, 42, ${Math.min(alpha + 0.1, 0.95)})` : 'rgba(15, 23, 42, 0.85)');
+      targets.forEach(t => {
+        t.style.setProperty('--bg-dark', '#0b0f19');
+        t.style.setProperty('--bg-app', '#0b0f19');
+        t.style.setProperty('--bg-card', isGlassy ? `rgba(15, 23, 42, ${alpha})` : '#151d30');
+        t.style.setProperty('--bg-card-hover', isGlassy ? `rgba(30, 41, 66, ${Math.min(alpha + 0.2, 1)})` : '#1e2942');
+        t.style.setProperty('--bg-input', isGlassy ? `rgba(15, 23, 42, ${Math.max(alpha - 0.1, 0.05)})` : 'rgba(15, 23, 42, 0.7)');
+        t.style.setProperty('--border-color', isGlassy ? `rgba(255, 255, 255, ${Math.max(0.12, Math.min(0.35, alpha + 0.15))})` : 'rgba(255, 255, 255, 0.15)');
+        t.style.setProperty('--text-main', '#f8fafc');
+        t.style.setProperty('--text-muted', '#94a3b8');
+        t.style.setProperty('--text-subtle', '#64748b');
+        t.style.setProperty('--sidebar-bg', isGlassy ? `rgba(15, 23, 42, ${Math.min(alpha + 0.1, 0.95)})` : '#0f172a');
+        t.style.setProperty('--header-bg', isGlassy ? `rgba(15, 23, 42, ${Math.min(alpha + 0.1, 0.95)})` : 'rgba(15, 23, 42, 0.85)');
+      });
     } else {
-      root.style.setProperty('--bg-dark', '#f8fafc');
-      root.style.setProperty('--bg-app', '#f8fafc');
-      root.style.setProperty('--bg-card', isGlassy ? `rgba(255, 255, 255, ${alpha})` : '#ffffff');
-      root.style.setProperty('--bg-card-hover', isGlassy ? `rgba(241, 245, 249, ${Math.min(alpha + 0.2, 1)})` : '#f1f5f9');
-      root.style.setProperty('--bg-input', isGlassy ? `rgba(255, 255, 255, ${Math.max(alpha - 0.1, 0.05)})` : '#ffffff');
-      root.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.12)');
-      root.style.setProperty('--text-main', '#0f172a');
-      root.style.setProperty('--text-muted', '#475569');
-      root.style.setProperty('--text-subtle', '#94a3b8');
-      root.style.setProperty('--sidebar-bg', isGlassy ? `rgba(255, 255, 255, ${Math.min(alpha + 0.1, 0.95)})` : '#ffffff');
-      root.style.setProperty('--header-bg', isGlassy ? `rgba(255, 255, 255, ${Math.min(alpha + 0.1, 0.95)})` : 'rgba(255, 255, 255, 0.85)');
+      targets.forEach(t => {
+        t.style.setProperty('--bg-dark', '#f8fafc');
+        t.style.setProperty('--bg-app', '#f8fafc');
+        t.style.setProperty('--bg-card', isGlassy ? `rgba(255, 255, 255, ${alpha})` : '#ffffff');
+        t.style.setProperty('--bg-card-hover', isGlassy ? `rgba(241, 245, 249, ${Math.min(alpha + 0.2, 1)})` : '#f1f5f9');
+        t.style.setProperty('--bg-input', isGlassy ? `rgba(255, 255, 255, ${Math.max(alpha - 0.1, 0.05)})` : '#ffffff');
+        t.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.12)');
+        t.style.setProperty('--text-main', '#0f172a');
+        t.style.setProperty('--text-muted', '#475569');
+        t.style.setProperty('--text-subtle', '#94a3b8');
+        t.style.setProperty('--sidebar-bg', isGlassy ? `rgba(255, 255, 255, ${Math.min(alpha + 0.1, 0.95)})` : '#ffffff');
+        t.style.setProperty('--header-bg', isGlassy ? `rgba(255, 255, 255, ${Math.min(alpha + 0.1, 0.95)})` : 'rgba(255, 255, 255, 0.85)');
+      });
     }
 
     // 3. Accent Colors
     const accent = this.config.accentColor || '#6366f1';
-    root.style.setProperty('--primary', accent);
-    root.style.setProperty('--primary-hover', this.adjustColorBrightness(accent, -15));
-    root.style.setProperty('--primary-light', this.hexToRgba(accent, isDark ? 0.18 : 0.12));
-    root.style.setProperty('--border-focus', accent);
+    targets.forEach(t => {
+      t.style.setProperty('--primary', accent);
+      t.style.setProperty('--primary-hover', this.adjustColorBrightness(accent, -15));
+      t.style.setProperty('--primary-light', this.hexToRgba(accent, isDark ? 0.22 : 0.15));
+      t.style.setProperty('--border-focus', accent);
+    });
+
+    // 3b. Sync Accent Color & Dark/Light Mode with Paper Theme
+    if (isPaper) {
+      const markerTint = this.hexToRgba(accent, isDark ? 0.38 : 0.28);
+      const markerSolid = this.hexToRgba(accent, isDark ? 0.85 : 0.8);
+      const markerDark = this.adjustColorBrightness(accent, isDark ? 20 : -15);
+
+      targets.forEach(t => {
+        t.style.setProperty('--paper-accent', accent);
+        t.style.setProperty('--paper-accent-marker', markerTint);
+        t.style.setProperty('--paper-accent-solid', markerSolid);
+        t.style.setProperty('--paper-accent-dark', markerDark);
+
+        // Dynamically sync paper-blue marker variables to the selected accent color
+        t.style.setProperty('--paper-blue', markerTint);
+        t.style.setProperty('--paper-blue-marker', markerTint);
+        t.style.setProperty('--paper-blue-dark', markerDark);
+        t.style.setProperty('--primary', accent);
+        t.style.setProperty('--primary-light', markerTint);
+      });
+
+      if (isDark) {
+        // Dark Paper / Charcoal Sketchbook / Blackboard Mode
+        targets.forEach(t => {
+          t.style.setProperty('--paper-bg', '#181A1E');
+          t.style.setProperty('--paper-bg-secondary', '#20242A');
+          t.style.setProperty('--paper-surface', '#22262E');
+          t.style.setProperty('--paper-surface-folded', '#2B303A');
+          t.style.setProperty('--paper-grid', '#2C323D');
+          t.style.setProperty('--paper-grid-fine', '#343B47');
+          t.style.setProperty('--paper-ink', '#F4F1EA');
+          t.style.setProperty('--paper-ink-soft', '#E6E1D5');
+          t.style.setProperty('--paper-muted', '#A8A296');
+          t.style.setProperty('--paper-pencil', '#C2BCB0');
+          t.style.setProperty('--paper-shadow-flat', '2px 2px 0px #0E1013');
+          t.style.setProperty('--paper-shadow-card', '3px 4px 0px #0E1013');
+          t.style.setProperty('--paper-shadow-card-hover', '5px 7px 0px #0E1013');
+          t.style.setProperty('--paper-border-ink', '2px solid #F4F1EA');
+          t.style.setProperty('--paper-border-thick', '2.5px solid #F4F1EA');
+
+          t.style.setProperty('--bg-dark', '#181A1E');
+          t.style.setProperty('--bg-app', '#181A1E');
+          t.style.setProperty('--bg-card', '#22262E');
+          t.style.setProperty('--bg-card-hover', '#2B303A');
+          t.style.setProperty('--bg-input', '#1C2026');
+          t.style.setProperty('--border-color', '#F4F1EA');
+          t.style.setProperty('--text-main', '#F4F1EA');
+          t.style.setProperty('--text-muted', '#A8A296');
+          t.style.setProperty('--text-subtle', '#C2BCB0');
+          t.style.setProperty('--sidebar-bg', '#181A1E');
+          t.style.setProperty('--header-bg', '#181A1E');
+        });
+      } else {
+        // Light Paper / Warm Cream Sketchbook Mode
+        targets.forEach(t => {
+          t.style.setProperty('--paper-bg', '#F8F5EE');
+          t.style.setProperty('--paper-bg-secondary', '#F3EFE6');
+          t.style.setProperty('--paper-surface', '#FFFEFA');
+          t.style.setProperty('--paper-surface-folded', '#F4EFEA');
+          t.style.setProperty('--paper-grid', '#DEDCD4');
+          t.style.setProperty('--paper-grid-fine', '#ECE8DF');
+          t.style.setProperty('--paper-ink', '#171717');
+          t.style.setProperty('--paper-ink-soft', '#2B2B2B');
+          t.style.setProperty('--paper-muted', '#5C5852');
+          t.style.setProperty('--paper-pencil', '#77736C');
+          t.style.setProperty('--paper-shadow-flat', '2px 2px 0px #171717');
+          t.style.setProperty('--paper-shadow-card', '3px 4px 0px #171717');
+          t.style.setProperty('--paper-shadow-card-hover', '5px 7px 0px #171717');
+          t.style.setProperty('--paper-border-ink', '2px solid #171717');
+          t.style.setProperty('--paper-border-thick', '2.5px solid #171717');
+
+          t.style.setProperty('--bg-dark', '#F8F5EE');
+          t.style.setProperty('--bg-app', '#F8F5EE');
+          t.style.setProperty('--bg-card', '#FFFEFA');
+          t.style.setProperty('--bg-card-hover', '#FFF9ED');
+          t.style.setProperty('--bg-input', '#FFFEFA');
+          t.style.setProperty('--border-color', '#171717');
+          t.style.setProperty('--text-main', '#171717');
+          t.style.setProperty('--text-muted', '#5C5852');
+          t.style.setProperty('--text-subtle', '#77736C');
+          t.style.setProperty('--sidebar-bg', '#F8F5EE');
+          t.style.setProperty('--header-bg', '#F8F5EE');
+        });
+      }
+    }
 
     // 4. Border Radius
     let radiusPx = '10px';

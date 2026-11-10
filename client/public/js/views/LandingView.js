@@ -6,23 +6,27 @@ const LandingView = {
     return `
       <!-- Hero Section -->
       <section class="hero-section" id="home">
-        <div class="container">
-          <div class="hero-badge">
-            <i class="fa-solid fa-sparkles"></i> Connected Career Ecosystem
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem;">
+          <div style="flex: 1.2; min-width: 320px;">
+            <div class="hero-badge">
+              <i class="fa-solid fa-sparkles"></i> Connected Career Ecosystem
+            </div>
+            <h1 class="hero-title">
+              Build Your Career.<br><span class="highlight-blue">Build Your Path.</span>
+            </h1>
+            <p class="hero-subtitle">
+              Create your resume and portfolio, discover the right career path, plan your learning, build meaningful projects, and get AI-powered career guidance — all in one personal career sketchbook.
+            </p>
+            <div class="hero-ctas">
+              <button class="btn btn-primary btn-lg btn-marker-blue" onclick="app.openSignUp()">
+                <i class="fa-solid fa-rocket"></i> Get Started
+              </button>
+              <button class="btn btn-secondary btn-lg" onclick="app.scrollToSection('features')">
+                <i class="fa-solid fa-compass"></i> Explore Pathfolio
+              </button>
+            </div>
           </div>
-          <h1 class="hero-title">
-            Build Your Career.<br><span>Build Your Path.</span>
-          </h1>
-          <p class="hero-subtitle">
-            Create your resume and portfolio, discover the right career path, plan your learning, build meaningful projects, and get AI-powered career guidance — all in one place.
-          </p>
-          <div class="hero-ctas">
-            <button class="btn btn-primary btn-lg" onclick="app.openSignUp()">
-              <i class="fa-solid fa-rocket"></i> Get Started
-            </button>
-            <button class="btn btn-secondary btn-lg" onclick="app.scrollToSection('features')">
-              <i class="fa-solid fa-compass"></i> Explore Pathfolio
-            </button>
+          <div id="landing-3d-canvas" style="flex: 0.9; min-width: 300px; height: 340px; display: flex; align-items: center; justify-content: center; position: relative;">
           </div>
         </div>
       </section>

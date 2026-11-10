@@ -1,0 +1,100 @@
+/**
+ * Pathfolio Paper World — Responsive Layout Adaptations
+ * Strictly scoped under .theme-paper
+ */
+
+/* Tablets & Smaller Desktops */
+@media (max-width: 992px) {
+  .theme-paper .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 6px 0px 0px var(--paper-ink);
+  }
+
+  .theme-paper .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .theme-paper .main-wrapper {
+    margin-left: 0 !important;
+  }
+
+  .theme-paper .hamburger-btn {
+    display: inline-flex !important;
+    color: var(--paper-ink);
+    font-size: 1.4rem;
+  }
+
+  body.theme-paper::before {
+    display: none;
+  }
+
+  .theme-paper .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .theme-paper .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .theme-paper .welcome-cta-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+  .theme-paper h1 { font-size: 1.9rem; }
+  .theme-paper h2 { font-size: 1.6rem; }
+  .theme-paper h3 { font-size: 1.35rem; }
+
+  .theme-paper .content-area {
+    padding: 1.25rem 1rem;
+  }
+
+  .theme-paper .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .theme-paper .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .theme-paper .next-step-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .theme-paper .next-step-item .btn {
+    align-self: flex-end;
+  }
+
+  .theme-paper .welcome-banner {
+    padding: 1.25rem;
+  }
+
+  .theme-paper .welcome-text h2 {
+    font-size: 1.7rem;
+  }
+
+  .theme-paper .next-steps-panel {
+    padding: 1.25rem;
+  }
+}
+
+/* Ultra Small Mobile Screens */
+@media (max-width: 480px) {
+  .theme-paper .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-paper .header-right .btn span {
+    display: none;
+  }
+}
+

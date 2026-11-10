@@ -1,0 +1,73 @@
+/**
+ * Pathfolio Paper World — Design System Variables & Tokens
+ * Isolated under .theme-paper / [data-theme-style="paper"]
+ */
+
+:root {
+  /* Paper Palette */
+  --paper-bg: #F8F5EE;
+  --paper-bg-secondary: #F3EFE6;
+  --paper-surface: #FFFEFA;
+  --paper-surface-folded: #F4EFEA;
+  --paper-grid: #DEDCD4;
+  --paper-grid-fine: #ECE8DF;
+  --paper-ink: #171717;
+  --paper-ink-soft: #2B2B2B;
+  --paper-muted: #77736C;
+  --paper-pencil: #5C5852;
+  --paper-crease: rgba(0, 0, 0, 0.04);
+
+  /* Accent & Highlighter Tints — Dynamically synced with user's selected accent */
+  --paper-accent: #6366f1;
+  --paper-accent-marker: rgba(185, 221, 240, 0.85);
+  --paper-accent-solid: rgba(120, 185, 219, 0.9);
+  --paper-accent-dark: #78B9DB;
+
+  /* Highlighter & Pastel Marker Tints */
+  --paper-blue: var(--paper-accent-marker, #B9DDF0);
+  --paper-blue-dark: var(--paper-accent-dark, #78B9DB);
+  --paper-blue-marker: var(--paper-accent-marker, rgba(185, 221, 240, 0.85));
+  --paper-green: #B8D9B5;
+  --paper-green-marker: rgba(184, 217, 181, 0.8);
+  --paper-yellow: #F3E5A8;
+  --paper-yellow-marker: rgba(243, 229, 168, 0.85);
+  --paper-peach: #F6CDBA;
+  --paper-purple: #D5C8F2;
+  --paper-red: #F5A9A9;
+
+  /* Typography */
+  --paper-font-sketch: 'Patrick Hand', cursive;
+  --paper-font-handwriting: 'Caveat', cursive;
+  --paper-font-kalam: 'Kalam', cursive;
+  --paper-font-casual: 'Gaegu', cursive;
+  --paper-font-body: 'Patrick Hand', 'Inter', -apple-system, sans-serif;
+  --paper-font-code: 'Courier New', monospace;
+
+  /* Hand-drawn Imperfect Border Radius Variations */
+  --paper-radius-card: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --paper-radius-card-alt: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  --paper-radius-pill: 255px 25px 225px 25px / 25px 225px 25px 255px;
+  --paper-radius-btn: 255px 18px 230px 18px / 18px 235px 18px 250px;
+  --paper-radius-tag: 120px 10px 140px 12px / 12px 140px 10px 120px;
+  --paper-radius-sm: 8px 12px 9px 14px / 14px 9px 12px 8px;
+
+  /* Sketch Shadows (Pen Drop & Paper Float) */
+  --paper-shadow-flat: 2px 2px 0px var(--paper-ink);
+  --paper-shadow-card: 3px 4px 0px var(--paper-ink);
+  --paper-shadow-card-hover: 5px 7px 0px var(--paper-ink);
+  --paper-shadow-lift: 6px 9px 0px rgba(23, 23, 23, 0.9);
+  --paper-shadow-soft: 0 4px 14px rgba(60, 50, 30, 0.08), 2px 3px 0px var(--paper-ink);
+  --paper-shadow-fold: -4px 4px 8px rgba(0, 0, 0, 0.15);
+
+  /* Border Strokes */
+  --paper-border-ink: 2px solid var(--paper-ink);
+  --paper-border-thick: 2.5px solid var(--paper-ink);
+  --paper-border-pencil: 1.5px dashed var(--paper-muted);
+  --paper-border-subtle: 1px solid var(--paper-grid);
+
+  /* Transition Speeds */
+  --paper-transition-fast: 0.15s ease-out;
+  --paper-transition-normal: 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  --paper-transition-paper: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+

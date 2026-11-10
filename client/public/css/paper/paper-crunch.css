@@ -1,0 +1,262 @@
+/**
+ * Pathfolio Paper World — Signature Realistic Paper Crunch Ball Styles (v2)
+ *
+ * Key fixes:
+ *  - Removed backdrop-filter blur that exposed background images / photos
+ *  - Overlay background is now fully opaque and theme-matched (no image bleed)
+ *  - Overlay background matches the paper texture color so the WebGL canvas
+ *    appears to emerge from and return to the page surface naturally
+ */
+
+/* ============================================================
+   1. FULLSCREEN PAPER CRUNCH TRANSITION OVERLAY
+   ============================================================ */
+
+#paper-crunch-overlay,
+.paper-crunch-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /*
+   * CRITICAL FIX — Problem C:
+   * This background must be opaque and match the paper texture color.
+   * DO NOT use backdrop-filter or any blur — that caused the photographic
+   * background images to bleed through, creating the "blurry photo" artefact.
+   * The overlay hides the page entirely; only the Three.js WebGL canvas
+   * and the transition badge are visible on top of this solid background.
+   */
+  background: #FDFAF4;
+
+  /* No backdrop-filter — intentionally removed */
+  transition: opacity 0.14s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Dark mode: match the dark paper/professional background */
+[data-theme="dark"] #paper-crunch-overlay,
+[data-theme="dark"] .paper-crunch-overlay {
+  background: #181C22;
+}
+
+/* Professional theme (non-paper): match white/professional surface */
+body:not(.theme-paper) #paper-crunch-overlay,
+body:not(.theme-paper) .paper-crunch-overlay {
+  background: #FFFFFF;
+}
+
+[data-theme="dark"] body:not(.theme-paper) #paper-crunch-overlay,
+[data-theme="dark"] body:not(.theme-paper) .paper-crunch-overlay {
+  background: #0F172A;
+}
+
+#paper-crunch-overlay.active,
+.paper-crunch-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* ============================================================
+   2. THREE.JS 3D CANVAS CONTAINER
+   ============================================================ */
+
+.paper-crunch-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paper-crunch-canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  /* Subtle drop shadow on the mesh itself — not the entire canvas */
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
+}
+
+/* ============================================================
+   3. HANDWRITTEN TRANSITION BADGE
+   ============================================================ */
+
+.paper-crunch-ui-layer {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.paper-crunch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.2rem;
+  background-color: var(--paper-surface, #FDFAF4);
+  color: var(--paper-ink, #1A1A1A);
+  border: 2px solid var(--paper-ink, #1A1A1A);
+  box-shadow: 3px 4px 0px var(--paper-ink, #1A1A1A);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  font-family: var(--paper-font-sketch, 'Patrick Hand', cursive, sans-serif);
+  font-size: 1.1rem;
+  letter-spacing: 0.4px;
+  animation: badgeFloating 1.6s ease-in-out infinite alternate;
+  transform: rotate(-1.5deg);
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .paper-crunch-badge {
+  background-color: #22262E;
+  color: #F0EDE5;
+  border-color: #F0EDE5;
+  box-shadow: 3px 4px 0px #0D1017;
+}
+
+.paper-crunch-icon {
+  font-size: 1.1rem;
+  display: inline-block;
+  animation: paperSpin 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes badgeFloating {
+  0%   { transform: translateY(0) rotate(-1.5deg); }
+  100% { transform: translateY(-5px) rotate(-0.4deg); }
+}
+
+@keyframes paperSpin {
+  0%   { transform: rotate(-8deg); }
+  100% { transform: rotate(8deg); }
+}
+
+/* ============================================================
+   4. NEW PAGE REVEAL & SETTLING PHYSICS
+   ============================================================ */
+
+@keyframes paperPageSettle {
+  0% {
+    opacity: 0.88;
+    transform: scale(0.988) translateY(6px);
+    filter: blur(0.5px);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.002) translateY(-1px);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+.paper-unfold-settle {
+  animation: paperPageSettle 0.44s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+}
+
+/* ============================================================
+   5. RESILIENT CSS 3D FALLBACK FOR NON-WEBGL DEVICES
+   ============================================================ */
+
+.css-fallback-mode .paper-crunch-css-ball {
+  width: 80px;
+  height: 80px;
+  background:
+    radial-gradient(circle at 32% 32%, #FFFFFF 0%, #F3EDD8 50%, #D2C5A4 100%);
+  border: 2px solid #1A1A1A;
+  border-radius: 48% 52% 60% 40% / 45% 55% 45% 55%;
+  box-shadow:
+    inset -5px -7px 12px rgba(0,0,0,0.20),
+    inset 5px 5px 10px rgba(255,255,255,0.55),
+    0 12px 22px rgba(0,0,0,0.30);
+  animation: cssBallCrunchUnfold 0.90s cubic-bezier(0.3, 0.05, 0.2, 1) forwards;
+  position: relative;
+}
+
+.css-fallback-mode .paper-crunch-css-ball::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(23,23,23,0.3);
+  border-radius: 42% 58% 50% 50%;
+  transform: rotate(22deg);
+}
+
+@keyframes cssBallCrunchUnfold {
+  0%   { transform: scale(5.5) rotate(0deg); opacity: 0.1; }
+  28%  { transform: scale(1) rotate(165deg); opacity: 1; }
+  52%  { transform: scale(1.06) rotate(210deg); opacity: 1; }
+  73%  { transform: scale(0.96) rotate(248deg); opacity: 1; }
+  100% { transform: scale(6) rotate(360deg); opacity: 0; }
+}
+
+/* ============================================================
+   6. LOCALIZED COMPONENT PAPER CRUNCH (MODALS & CARDS)
+   ============================================================ */
+
+@keyframes componentPaperUnfold {
+  0% {
+    opacity: 0;
+    transform: scale(0.42) rotate(-3deg);
+    filter: brightness(0.92);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.02) rotate(0.4deg);
+    filter: brightness(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+}
+
+@keyframes componentPaperCollapse {
+  0%   { opacity: 1; transform: scale(1) rotate(0deg); }
+  28%  { opacity: 0.9; transform: scale(0.94) rotate(1.5deg); }
+  100% { opacity: 0; transform: scale(0.18) rotate(-12deg); filter: blur(1.5px); }
+}
+
+.modal-content.paper-modal-unfold {
+  animation: componentPaperUnfold 0.36s cubic-bezier(0.18, 0.89, 0.32, 1.25) forwards;
+}
+
+.modal-content.paper-modal-collapse {
+  animation: componentPaperCollapse 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================================
+   7. ACCESSIBILITY: PREFERS-REDUCED-MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  #paper-crunch-overlay,
+  .paper-crunch-overlay {
+    transition: none !important;
+    display: none !important;
+  }
+  .paper-unfold-settle,
+  .modal-content.paper-modal-unfold,
+  .modal-content.paper-modal-collapse {
+    animation: none !important;
+  }
+}

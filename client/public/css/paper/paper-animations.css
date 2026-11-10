@@ -1,0 +1,260 @@
+/**
+ * Pathfolio Paper World — Animations & Transition Physics
+ * Strictly scoped under .theme-paper
+ */
+
+/* ============================================================
+   1. PAGE ENTRANCE & UNFOLDING
+   ============================================================ */
+
+@keyframes paperUnfoldEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98) rotate(-0.5deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.002) rotate(0.2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.theme-paper .paper-unfold {
+  animation: paperUnfoldEntrance 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+
+/* Staggered Card Entrance */
+.theme-paper .metrics-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.theme-paper .metrics-grid > *:nth-child(2) { animation-delay: 0.1s; }
+.theme-paper .metrics-grid > *:nth-child(3) { animation-delay: 0.15s; }
+.theme-paper .metrics-grid > *:nth-child(4) { animation-delay: 0.2s; }
+
+/* ============================================================
+   2. PHYSICAL PAPER CRUNCH, FOLD & OPEN TRANSITION
+   ============================================================ */
+
+#paper-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background-color: rgba(248, 245, 238, 0.95);
+  background-image: 
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  transition: opacity 0.15s ease-in, visibility 0.15s ease-in;
+}
+
+#paper-transition-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* 3D Folding Notebook Page Container */
+.paper-crunch-container {
+  position: relative;
+  width: 90vw;
+  max-width: 680px;
+  height: 65vh;
+  max-height: 460px;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.paper-crunch-sheet {
+  width: 100%;
+  height: 100%;
+  background-color: var(--paper-surface);
+  border: 3px solid var(--paper-ink);
+  box-shadow: 10px 14px 0px var(--paper-ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transform-origin: left center;
+  backface-visibility: hidden;
+}
+
+/* Notebook Creases & Diagonal Fold Lines */
+.paper-crunch-crease {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--paper-ink),
+    var(--paper-ink) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  opacity: 0.35;
+}
+
+.paper-crunch-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.06) 50%, transparent 55%),
+    linear-gradient(45deg, transparent 48%, rgba(23,23,23,0.04) 50%, transparent 52%);
+  pointer-events: none;
+}
+
+/* Keyframes for Paper Crunch, Fold & Opening Sequence */
+@keyframes paperCrunchFoldOpen {
+  0% {
+    transform: perspective(1200px) rotateY(0deg) scale(1) rotate(0deg);
+    box-shadow: 10px 14px 0px var(--paper-ink);
+    filter: brightness(1);
+  }
+  25% {
+    /* Paper compresses & crunches with corner curls */
+    transform: perspective(1200px) rotateY(-18deg) scale(0.92, 0.88) rotate(-2deg) skewX(-3deg);
+    box-shadow: 16px 22px 0px var(--paper-ink);
+    filter: brightness(0.95);
+  }
+  50% {
+    /* Page folds over the center spine like turning a notebook page */
+    transform: perspective(1200px) rotateY(-82deg) scale(0.85, 0.94) rotate(-1deg);
+    box-shadow: 4px 8px 0px var(--paper-ink);
+    filter: brightness(0.88);
+  }
+  75% {
+    /* New page starts unfolding and opening */
+    transform: perspective(1200px) rotateY(-12deg) scale(0.97, 0.98) rotate(0.8deg);
+    box-shadow: 12px 16px 0px var(--paper-ink);
+    filter: brightness(0.98);
+  }
+  100% {
+    /* Fully unfolded and smooth */
+    transform: perspective(1200px) rotateY(0deg) scale(1) rotate(0deg);
+    box-shadow: 10px 14px 0px var(--paper-ink);
+    filter: brightness(1);
+  }
+}
+
+#paper-transition-overlay.active .paper-crunch-sheet {
+  animation: paperCrunchFoldOpen 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* ============================================================
+   3. PAPER LOADER (Folding Sheet Animation)
+   ============================================================ */
+
+.paper-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 3rem;
+}
+
+.paper-folding-icon {
+  width: 52px;
+  height: 64px;
+  background-color: var(--paper-surface);
+  border: 2.5px solid var(--paper-ink);
+  box-shadow: 4px 5px 0px var(--paper-ink);
+  border-radius: 4px 18px 4px 4px;
+  position: relative;
+  animation: paperFoldFlip 1.4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.paper-folding-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background-color: var(--paper-blue);
+  border-left: 2px solid var(--paper-ink);
+  border-bottom: 2px solid var(--paper-ink);
+  border-radius: 0 0 0 4px;
+}
+
+.paper-folding-icon::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 8px;
+  right: 8px;
+  height: 3px;
+  background: var(--paper-ink);
+  border-radius: 2px;
+  box-shadow: 0 8px 0 var(--paper-ink), 0 16px 0 var(--paper-ink);
+}
+
+@keyframes paperFoldFlip {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) translateY(-6px); }
+  50% { transform: rotate(0deg) scale(1.05); }
+  75% { transform: rotate(8deg) translateY(-3px); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.paper-loader-text {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   4. MARKER STROKE DRAW ANIMATION
+   ============================================================ */
+
+@keyframes markerSweep {
+  0% {
+    background-size: 0% 100%;
+  }
+  100% {
+    background-size: 100% 100%;
+  }
+}
+
+.theme-paper .marker-animate {
+  background-repeat: no-repeat;
+  animation: markerSweep 0.5s ease-out forwards;
+}
+
+/* ============================================================
+   5. ACCESSIBILITY OVERRIDES (Reduced Motion)
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-paper *,
+  #paper-transition-overlay,
+  .paper-crunch-sheet,
+  .paper-folding-icon {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+

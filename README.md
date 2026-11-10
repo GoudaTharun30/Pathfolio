@@ -79,3 +79,54 @@ Open **`http://localhost:5000`** in your browser.
    - 5 templates, custom AI design prompt with safe structured JSON configuration, responsive device preview toggle (Desktop/Tablet/Mobile), HTML package export.
 10. **Floating AI Career Assistant**:
     - Floating bottom-right chatbot providing context-aware advice based on user profile and roadmap progress.
+11. **🎉 Signature 3D Paper Crunch Ball Transition**:
+    - Realistic paper-crumpling animation between all pages and theme switches (see below).
+
+---
+
+## 🎉 Signature Paper Crunch Ball Animation
+
+Pathfolio's most distinctive feature: a fully 3D, physically-modeled paper-crumpling transition system built with **Three.js WebGL** — no pre-rendered videos, no sprite sheets, no fake CSS tricks.
+
+### How It Works
+
+Every page navigation and theme switch triggers a 5-stage animation:
+
+1. **Page Crunch** — The current page visually compresses inward via a procedural vertex-deformation mesh (52×52 subdivisions, 6 pinch anchors, 4 overlapping fold vectors).
+2. **Paper Ball** — Vertices are radially projected onto an irregular sphere (`BALL_RADIUS: 0.95`) with faceted displacement, creating a tactile crumpled-paper ball at screen center.
+3. **Apex** — The view/theme change fires here (guaranteed frame-safe trigger at 44% progress). The ball rotates with a soft ambient + directional light rig (`roughness: 0.94, metalness: 0.0`).
+4. **Unfold** — The ball progressively flattens back via inverse deformation, expanding to fill the viewport.
+5. **Settle** — A subtle CSS `paper-unfold-settle` keyframe completes the reveal; the transition overlay is removed and interaction is restored.
+
+### Architecture
+
+| File | Purpose |
+|---|---|
+| `client/public/js/paper/paperCrunch.js` | Core `PaperCrunchEngine` singleton — WebGL init, vertex deformation, animation loop |
+| `client/public/js/paper/paperTransitions.js` | Coordinator — page transitions, theme transforms, modal physics |
+| `client/public/css/paper/paper-crunch.css` | Overlay styles, `paper-unfold-settle` keyframe, reduced-motion guard |
+| `client/public/js/utils/themeManager.js` | `setThemeStyle()` — triggers paper crunch on theme change |
+| `client/public/js/app.js` | `navigate()` — calls transitions with debounce guard |
+
+### Features
+
+- ✅ **All 8 app pages** use the same transition engine
+- ✅ **Professional ↔ Paper World** theme switch with contextual badge
+- ✅ **Localized modal physics** (`openComponent` / `closeComponent`) for roadmap, project, and profile panels
+- ✅ **Browser back/forward** history triggers transitions
+- ✅ **Rapid-navigation debounce** guard prevents overlapping animations
+- ✅ **Reduced-motion accessibility** — skips deformation, fires callback instantly
+- ✅ **CSS 3D fallback** for environments without WebGL
+
+### Running the Animation Test Suite
+
+```bash
+npm run test:paper-crunch
+```
+
+Runs 18 Playwright E2E tests covering engine init, theme transforms, all 8 page routes, modal physics, browser history, rapid-nav guard, reduced-motion mode, and the CSS fallback.
+
+Expected output:
+```
+TOTAL TESTS: 18 | PASSED: 18 | FAILED: 0 | Console Errors: 0
+```

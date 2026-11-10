@@ -255,6 +255,9 @@ const RoadmapsView = {
       </form>
     `;
 
+    if (window.paperTransitions && typeof paperTransitions.openComponent === 'function') {
+      paperTransitions.openComponent(body);
+    }
     modal.classList.add('active');
   },
 

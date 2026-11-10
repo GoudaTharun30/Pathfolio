@@ -1,0 +1,271 @@
+/**
+ * Pathfolio Paper World — Base Theme & Global Styles
+ * Strictly scoped under .theme-paper
+ */
+
+/* Google Fonts Import for Handwritten Typographies */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Gaegu:wght@400;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap');
+
+/* Base Paper Theme Root Overrides */
+.theme-paper,
+[data-theme-style="paper"] {
+  --bg-dark: var(--paper-bg);
+  --bg-app: var(--paper-bg);
+  --bg-card: var(--paper-surface);
+  --bg-card-hover: var(--paper-surface-folded);
+  --bg-input: var(--paper-surface);
+  --border-color: var(--paper-ink);
+  --border-focus: var(--paper-accent, var(--paper-ink));
+  
+  --text-main: var(--paper-ink);
+  --text-muted: var(--paper-muted);
+  --text-subtle: var(--paper-pencil);
+  
+  --primary: var(--paper-accent, #171717);
+  --primary-hover: var(--paper-accent-dark, #333333);
+  --primary-light: var(--paper-accent-marker, #B9DDF0);
+  
+  --secondary: var(--paper-accent, #78B9DB);
+  --success: #3B7A38;
+  --success-light: #B8D9B5;
+  --warning: #B38600;
+  --danger: #B3261E;
+
+  --sidebar-bg: var(--paper-bg);
+  --header-bg: var(--paper-bg);
+  --font-primary: var(--paper-font-body);
+  --font-heading: var(--paper-font-sketch);
+}
+
+/* Light Paper Theme (Default Warm Cream) */
+[data-theme="light"].theme-paper,
+[data-theme="light"] body.theme-paper,
+body.theme-paper:not([data-theme="dark"]) {
+  --paper-bg: #F8F5EE;
+  --paper-bg-secondary: #F3EFE6;
+  --paper-surface: #FFFEFA;
+  --paper-surface-folded: #F4EFEA;
+  --paper-grid: #DEDCD4;
+  --paper-grid-fine: #ECE8DF;
+  --paper-ink: #171717;
+  --paper-ink-soft: #2B2B2B;
+  --paper-muted: #5C5852;
+  --paper-pencil: #77736C;
+  --paper-crease: rgba(0, 0, 0, 0.04);
+  --paper-shadow-flat: 2px 2px 0px #171717;
+  --paper-shadow-card: 3px 4px 0px #171717;
+  --paper-shadow-card-hover: 5px 7px 0px #171717;
+  --paper-border-ink: 2px solid #171717;
+  --paper-border-thick: 2.5px solid #171717;
+}
+
+/* Dark Paper Theme (Charcoal Blackboard / Slate Sketchbook) */
+[data-theme="dark"].theme-paper,
+[data-theme="dark"] body.theme-paper,
+body.theme-paper[data-theme="dark"],
+[data-theme="dark"] .theme-paper {
+  --paper-bg: #181A1E !important;
+  --paper-bg-secondary: #20242A !important;
+  --paper-surface: #22262E !important;
+  --paper-surface-folded: #2B303A !important;
+  --paper-grid: #2C323D !important;
+  --paper-grid-fine: #343B47 !important;
+  --paper-ink: #F4F1EA !important;
+  --paper-ink-soft: #E6E1D5 !important;
+  --paper-muted: #A8A296 !important;
+  --paper-pencil: #C2BCB0 !important;
+  --paper-crease: rgba(255, 255, 255, 0.04) !important;
+  --paper-shadow-flat: 2px 2px 0px #0E1013 !important;
+  --paper-shadow-card: 3px 4px 0px #0E1013 !important;
+  --paper-shadow-card-hover: 5px 7px 0px #0E1013 !important;
+  --paper-border-ink: 2px solid #F4F1EA !important;
+  --paper-border-thick: 2.5px solid #F4F1EA !important;
+
+  --bg-dark: #181A1E !important;
+  --bg-app: #181A1E !important;
+  --bg-card: #22262E !important;
+  --bg-card-hover: #2B303A !important;
+  --bg-input: #1C2026 !important;
+  --border-color: #F4F1EA !important;
+  --text-main: #F4F1EA !important;
+  --text-muted: #A8A296 !important;
+  --text-subtle: #C2BCB0 !important;
+  --sidebar-bg: #181A1E !important;
+  --header-bg: #181A1E !important;
+}
+
+[data-theme="dark"] body.theme-paper::before {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01) 60%, transparent);
+}
+
+[data-theme="dark"] body.theme-paper::after {
+  background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0);
+}
+
+/* Paper Page Background & Graph-Paper Grid */
+body.theme-paper {
+  background-color: var(--paper-bg);
+  background-image: 
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
+  color: var(--paper-ink);
+  font-family: var(--paper-font-body);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  position: relative;
+  letter-spacing: 0.01em;
+}
+
+/* Notebook Center Crease & Paper Texture Overlay */
+body.theme-paper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 260px;
+  width: 12px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.01) 60%, transparent);
+  pointer-events: none;
+  z-index: 1001;
+  opacity: 0.8;
+}
+
+body.theme-paper::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(0,0,0,0.02) 1px, transparent 0);
+  background-size: 6px 6px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+}
+
+/* Selection Highlight — Marker Blue */
+.theme-paper ::selection {
+  background-color: var(--paper-blue);
+  color: var(--paper-ink);
+}
+
+/* Typography Hierarchy in Paper World */
+.theme-paper h1,
+.theme-paper h2,
+.theme-paper h3,
+.theme-paper h4,
+.theme-paper h5,
+.theme-paper h6 {
+  font-family: var(--paper-font-sketch);
+  color: var(--paper-ink);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+.theme-paper h1 { font-size: 2.4rem; }
+.theme-paper h2 { font-size: 2rem; }
+.theme-paper h3 { font-size: 1.55rem; }
+.theme-paper h4 { font-size: 1.3rem; }
+.theme-paper h5 { font-size: 1.15rem; }
+
+.theme-paper p,
+.theme-paper span,
+.theme-paper li,
+.theme-paper label {
+  font-family: var(--paper-font-body);
+  color: var(--paper-ink);
+}
+
+/* Hand-drawn Underlines & Marker Highlights */
+.theme-paper .marker-highlight,
+.theme-paper .highlight-blue {
+  background: linear-gradient(104deg, rgba(185, 221, 240, 0) 0.9%, var(--paper-blue-marker) 2.4%, rgba(185, 221, 240, 0.6) 95%, rgba(185, 221, 240, 0) 98%);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  display: inline-block;
+  transform: rotate(-0.5deg);
+}
+
+.theme-paper .highlight-yellow {
+  background: linear-gradient(104deg, rgba(243, 229, 168, 0) 0.9%, var(--paper-yellow-marker) 2.4%, rgba(243, 229, 168, 0.6) 95%, rgba(243, 229, 168, 0) 98%);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  display: inline-block;
+  transform: rotate(0.4deg);
+}
+
+.theme-paper .highlight-green {
+  background: linear-gradient(104deg, rgba(184, 217, 181, 0) 0.9%, var(--paper-green-marker) 2.4%, rgba(184, 217, 181, 0.6) 95%, rgba(184, 217, 181, 0) 98%);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.theme-paper .sketch-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.theme-paper .sketch-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 3px;
+  background: currentColor;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+/* Custom Paper Scrollbars */
+.theme-paper ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.theme-paper ::-webkit-scrollbar-track {
+  background: var(--paper-bg);
+  border-left: 1.5px solid var(--paper-grid);
+}
+
+.theme-paper ::-webkit-scrollbar-thumb {
+  background: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: 1px 1px 0px var(--paper-ink);
+}
+
+.theme-paper ::-webkit-scrollbar-thumb:hover {
+  background: var(--paper-blue);
+}
+
+/* Logo in Paper World */
+.theme-paper .logo {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--paper-ink) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-paper .logo i {
+  color: var(--paper-ink);
+  transform: rotate(-8deg);
+  transition: transform 0.3s ease;
+}
+
+.theme-paper .logo:hover i {
+  transform: rotate(20deg) scale(1.1);
+}
+
+.theme-paper .logo span {
+  color: var(--paper-blue-dark);
+}
+

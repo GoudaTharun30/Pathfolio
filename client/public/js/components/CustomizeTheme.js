@@ -27,6 +27,22 @@ const CustomizeTheme = {
         </div>
 
         <div class="customize-drawer-body">
+          <!-- 0. Theme Style Experience (Paper World vs Original) -->
+          <div class="customize-section" style="background: rgba(185, 221, 240, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            <label class="customize-label" style="font-weight: 700;"><i class="fa-solid fa-wand-magic-sparkles"></i> Experience Mode</label>
+            <div class="toggle-group">
+              <button class="toggle-btn ${cfg.themeStyle === 'paper' ? 'active' : ''}" onclick="themeManager.setThemeStyle('paper');" style="flex: 1;">
+                📜 Paper World
+              </button>
+              <button class="toggle-btn ${cfg.themeStyle !== 'paper' ? 'active' : ''}" onclick="themeManager.setThemeStyle('original');" style="flex: 1;">
+                💻 Original Theme
+              </button>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 0;">
+              ${cfg.themeStyle === 'paper' ? '✨ Interactive hand-drawn sketchbook theme with 3D paper depth.' : 'Modern clean developer dashboard.'}
+            </p>
+          </div>
+
           <!-- 1. Appearance Section -->
           <div class="customize-section">
             <label class="customize-label"><i class="fa-solid fa-sun-moon"></i> Appearance</label>

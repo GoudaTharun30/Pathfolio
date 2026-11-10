@@ -1,0 +1,1250 @@
+/**
+ * Pathfolio Paper World — Component Styles & Hand-Drawn Notebook Elements
+ * Strictly scoped under .theme-paper
+ */
+
+/* ============================================================
+   1. APP SHELL & SIDEBAR NAVIGATION (Matching Reference Blueprint)
+   ============================================================ */
+
+.theme-paper .app-container {
+  background-color: var(--paper-bg);
+}
+
+.theme-paper .sidebar {
+  background-color: var(--paper-bg);
+  border-right: 2.5px solid var(--paper-ink);
+  box-shadow: 2px 0px 0px rgba(23, 23, 23, 0.05);
+  backdrop-filter: none;
+}
+
+.theme-paper .sidebar-header {
+  border-bottom: 2px solid var(--paper-ink);
+  padding: 1.25rem 1.5rem;
+}
+
+.theme-paper .sidebar-menu {
+  gap: 0.5rem;
+  padding: 1.25rem 0.85rem;
+}
+
+/* Sidebar Nav Items */
+.theme-paper .sidebar-item a {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--paper-ink);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--paper-radius-btn);
+  border: 1.5px solid transparent;
+  transition: all var(--paper-transition-fast);
+  position: relative;
+}
+
+.theme-paper .sidebar-item a i {
+  color: var(--paper-ink);
+  font-size: 1.15rem;
+  transition: transform 0.2s ease;
+}
+
+/* Hover State */
+.theme-paper .sidebar-item a:hover {
+  background-color: rgba(185, 221, 240, 0.25);
+  border: 1.5px dashed var(--paper-ink);
+  transform: translateX(3px);
+}
+
+.theme-paper .sidebar-item a:hover i {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* Active State — Exact Hand-Drawn Blue Highlighter Loop from Blueprint */
+.theme-paper .sidebar-item.active a {
+  background-color: var(--paper-blue) !important;
+  color: var(--paper-ink) !important;
+  font-weight: 700;
+  border: 2px solid var(--paper-ink) !important;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  box-shadow: 2px 3px 0px var(--paper-ink) !important;
+  transform: rotate(-0.5deg);
+}
+
+.theme-paper .sidebar-item.active a::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1.5px solid var(--paper-ink);
+  border-radius: 250px 18px 230px 16px / 16px 235px 18px 245px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.theme-paper .sidebar-footer {
+  border-top: 2px solid var(--paper-ink);
+  padding: 1.25rem;
+  background-color: var(--paper-bg);
+}
+
+/* App Header */
+.theme-paper .app-header {
+  background-color: var(--paper-bg);
+  border-bottom: 2px solid var(--paper-ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.theme-paper .page-title {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  letter-spacing: 0.02em;
+}
+
+.theme-paper .user-profile-badge {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-pill);
+  box-shadow: 2px 2px 0px var(--paper-ink);
+  font-family: var(--paper-font-sketch);
+  color: var(--paper-ink);
+}
+
+.theme-paper .user-profile-badge:hover {
+  background-color: var(--paper-yellow);
+  transform: translateY(-1px);
+}
+
+.theme-paper .user-avatar {
+  background-color: var(--paper-ink);
+  color: var(--paper-surface);
+  border: 1.5px solid var(--paper-ink);
+  font-family: var(--paper-font-sketch);
+}
+
+/* ============================================================
+   2. CARDS & PANELS (Notebook Sheets)
+   ============================================================ */
+
+.theme-paper .card {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  box-shadow: var(--paper-shadow-card);
+  padding: 1.75rem;
+  position: relative;
+  transition: transform var(--paper-transition-normal), box-shadow var(--paper-transition-normal);
+}
+
+.theme-paper .card:hover {
+  transform: translateY(-2px) rotate(-0.25deg);
+  box-shadow: var(--paper-shadow-card-hover);
+}
+
+/* Paper Corner Fold Effect (Selective) */
+.theme-paper .paper-fold,
+.theme-paper .card-folded {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-paper .paper-fold::after,
+.theme-paper .card-folded::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 28px 28px 0;
+  border-color: transparent var(--paper-bg) transparent transparent;
+  transition: border-width 0.2s ease;
+  filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.2));
+}
+
+.theme-paper .paper-fold:hover::after,
+.theme-paper .card-folded:hover::after {
+  border-width: 0 38px 38px 0;
+}
+
+/* Washi Tape Accent for Cards & Modals */
+.theme-paper .washi-tape-top {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: 90px;
+  height: 24px;
+  background-color: rgba(243, 229, 168, 0.75);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-left: 2px dashed rgba(0,0,0,0.15);
+  border-right: 2px dashed rgba(0,0,0,0.15);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================================
+   3. BUTTONS (Hand-Drawn Sketch Buttons)
+   ============================================================ */
+
+.theme-paper .btn {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-btn);
+  box-shadow: var(--paper-shadow-flat);
+  transition: all var(--paper-transition-fast);
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.theme-paper .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--paper-shadow-card);
+}
+
+.theme-paper .btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--paper-ink);
+}
+
+.theme-paper .btn-primary {
+  background-color: var(--paper-ink) !important;
+  color: var(--paper-surface) !important;
+  border-color: var(--paper-ink) !important;
+}
+
+.theme-paper .btn-primary:hover {
+  background-color: #333333 !important;
+  color: #FFFFFF !important;
+}
+
+.theme-paper .btn-secondary {
+  background-color: var(--paper-surface);
+  color: var(--paper-ink);
+  border-color: var(--paper-ink);
+}
+
+.theme-paper .btn-secondary:hover {
+  background-color: var(--paper-yellow);
+}
+
+.theme-paper .btn-outline {
+  background-color: transparent;
+  color: var(--paper-ink);
+  border-color: var(--paper-ink);
+}
+
+.theme-paper .btn-outline:hover {
+  background-color: var(--paper-blue);
+}
+
+/* Marker Pill Buttons (like Continue Learning & Complete Profile) */
+.theme-paper .btn-marker-blue {
+  background-color: var(--paper-blue) !important;
+  color: var(--paper-ink) !important;
+  border: 2px solid var(--paper-ink) !important;
+}
+
+.theme-paper .btn-marker-blue:hover {
+  background-color: var(--paper-blue-dark) !important;
+}
+
+/* Hatched Button (Pencil Shaded) */
+.theme-paper .btn-hatched {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--paper-surface),
+    var(--paper-surface) 4px,
+    var(--paper-ink) 4px,
+    var(--paper-ink) 5.5px
+  ) !important;
+  color: var(--paper-surface) !important;
+  text-shadow: 0 0 3px #000, 1px 1px 0 #000;
+}
+
+/* ============================================================
+   4. DASHBOARD OVERVIEW — EXACT MATCH TO BLUEPRINT
+   ============================================================ */
+
+/* Welcome Banner */
+.theme-paper .welcome-banner {
+  background-color: var(--paper-surface);
+  border: 2.5px solid var(--paper-ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: var(--paper-shadow-card);
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: none;
+}
+
+.theme-paper .welcome-text h2 {
+  font-family: var(--paper-font-handwriting);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  margin-bottom: 0.35rem;
+  line-height: 1.2;
+}
+
+.theme-paper .welcome-text p {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.2rem;
+  color: var(--paper-ink) !important;
+  margin-top: 0.25rem;
+}
+
+.theme-paper .welcome-text strong {
+  color: var(--paper-ink) !important;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Blueprint Sketch Arrows pointing to Continue Learning */
+.theme-paper .welcome-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.theme-paper .sketch-arrow-left {
+  position: relative;
+  font-size: 1.4rem;
+  color: var(--paper-ink);
+  user-select: none;
+  font-weight: 700;
+}
+
+/* Metric Cards Grid */
+.theme-paper .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.theme-paper .metric-card {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: var(--paper-shadow-card);
+  padding: 1.25rem 1.4rem;
+  position: relative;
+  transition: all var(--paper-transition-normal);
+}
+
+.theme-paper .metric-card:hover {
+  transform: translateY(-3px) rotate(0.4deg);
+  box-shadow: var(--paper-shadow-card-hover);
+}
+
+.theme-paper .metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--paper-ink);
+  margin-bottom: 0.35rem;
+}
+
+.theme-paper .metric-header i {
+  font-size: 1.3rem;
+  color: var(--paper-ink) !important;
+}
+
+.theme-paper .metric-value {
+  font-family: var(--paper-font-sketch);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  line-height: 1.1;
+  margin: 0.2rem 0;
+}
+
+/* Hand-Drawn Progress Bar with Diagonal Hatched Fill */
+.theme-paper .progress-bar-container {
+  height: 14px;
+  background-color: var(--paper-bg);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-pill);
+  overflow: hidden;
+  position: relative;
+  margin: 0.5rem 0;
+}
+
+.theme-paper .progress-bar-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--paper-ink),
+    var(--paper-ink) 2.5px,
+    var(--paper-surface) 2.5px,
+    var(--paper-surface) 5.5px
+  ) !important;
+  border-right: 2px solid var(--paper-ink);
+  transition: width 0.5s ease-out;
+}
+
+/* Quick Actions Section */
+.theme-paper .quick-actions-title {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-paper .quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.theme-paper .quick-actions-grid .btn {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.1rem;
+  padding: 0.75rem 1rem;
+  position: relative;
+  background-color: var(--paper-surface);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-ink);
+}
+
+/* Small Sketch Pencil / Pin Doodle above Quick Actions */
+.theme-paper .quick-actions-grid .btn::before {
+  content: '✏️';
+  position: absolute;
+  top: -12px;
+  right: 12px;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  transform: rotate(15deg);
+  transition: transform 0.2s ease;
+}
+
+.theme-paper .quick-actions-grid .btn:hover::before {
+  transform: rotate(-15deg) scale(1.2);
+}
+
+/* "Complete Profile" has Blue Marker Highlight as in Reference */
+.theme-paper .quick-action-primary {
+  background-color: var(--paper-blue) !important;
+  box-shadow: 3px 3px 0px var(--paper-ink) !important;
+}
+
+/* Recommended Next Steps Panel */
+.theme-paper .next-steps-panel {
+  background-color: var(--paper-surface);
+  border: 2.5px solid var(--paper-ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: var(--paper-shadow-card);
+  padding: 2rem;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.theme-paper .next-steps-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.75rem;
+}
+
+.theme-paper .next-steps-title {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  background: var(--paper-blue-marker);
+  padding: 0.1rem 0.6rem;
+  border-radius: 4px;
+  transform: rotate(-0.5deg);
+  display: inline-block;
+}
+
+.theme-paper .next-steps-exclamation {
+  font-family: var(--paper-font-sketch);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+}
+
+.theme-paper .next-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  position: relative;
+}
+
+.theme-paper .next-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--paper-bg);
+  border: 2px dashed var(--paper-ink);
+  border-radius: var(--paper-radius-card-alt);
+  transition: all var(--paper-transition-fast);
+}
+
+.theme-paper .next-step-item:hover {
+  background-color: var(--paper-surface);
+  border-style: solid;
+  transform: translateX(4px);
+}
+
+.theme-paper .step-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.theme-paper .step-info strong {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--paper-ink);
+  display: block;
+}
+
+.theme-paper .step-info div {
+  font-family: var(--paper-font-body);
+  font-size: 1.05rem;
+  color: var(--paper-muted);
+}
+
+/* Hand-Drawn Checkbox / Radio Markers */
+.theme-paper .sketch-check-icon {
+  font-size: 1.4rem;
+  color: var(--paper-ink);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   5. FORM CONTROLS & INPUTS (Notebook Lined & Sketched)
+   ============================================================ */
+
+.theme-paper .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.theme-paper .form-label {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--paper-ink);
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.theme-paper .form-control,
+.theme-paper input[type="text"],
+.theme-paper input[type="email"],
+.theme-paper input[type="password"],
+.theme-paper input[type="search"],
+.theme-paper input[type="url"],
+.theme-paper input[type="number"],
+.theme-paper select,
+.theme-paper textarea {
+  font-family: var(--paper-font-body);
+  font-size: 1.1rem;
+  background-color: var(--paper-surface);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-btn);
+  padding: 0.65rem 1rem;
+  box-shadow: 1px 2px 0px var(--paper-ink);
+  transition: all var(--paper-transition-fast);
+}
+
+.theme-paper .form-control:focus,
+.theme-paper input:focus,
+.theme-paper textarea:focus,
+.theme-paper select:focus {
+  outline: none;
+  border-color: var(--paper-ink);
+  box-shadow: 3px 3px 0px var(--paper-ink);
+  background-color: #FFFFFF;
+}
+
+/* Notebook Lined Textarea */
+.theme-paper textarea.form-control {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 28px,
+    var(--paper-grid) 28px,
+    var(--paper-grid) 29px
+  );
+  line-height: 29px;
+  padding-top: 4px;
+}
+
+/* Badges & Chips */
+.theme-paper .badge {
+  font-family: var(--paper-font-sketch);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1.5px solid var(--paper-ink);
+  border-radius: var(--paper-radius-tag);
+  padding: 0.2rem 0.65rem;
+  background-color: var(--paper-surface);
+  color: var(--paper-ink);
+  box-shadow: 1px 1px 0px var(--paper-ink);
+}
+
+.theme-paper .badge-primary {
+  background-color: var(--paper-blue);
+}
+
+.theme-paper .badge-success {
+  background-color: var(--paper-green);
+}
+
+.theme-paper .badge-warning {
+  background-color: var(--paper-yellow);
+}
+
+/* ============================================================
+   6. MODALS, TOASTS & DRAWER
+   ============================================================ */
+
+.theme-paper .modal-content {
+  background-color: var(--paper-surface);
+  border: 2.5px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  box-shadow: var(--paper-shadow-lift);
+  padding: 2.25rem;
+  color: var(--paper-ink);
+}
+
+.theme-paper .customize-drawer {
+  background-color: var(--paper-bg);
+  border-left: 2.5px solid var(--paper-ink);
+  box-shadow: -4px 0px 14px rgba(23, 23, 23, 0.15);
+}
+
+.theme-paper .customize-drawer-header {
+  border-bottom: 2px solid var(--paper-ink);
+}
+
+.theme-paper .customize-section {
+  border-bottom: 1.5px dashed var(--paper-ink);
+  padding: 1.25rem 0;
+}
+
+.theme-paper .toggle-btn {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.05rem;
+  border: 1.5px solid var(--paper-ink);
+  border-radius: var(--paper-radius-btn);
+  background-color: var(--paper-surface);
+  color: var(--paper-ink);
+}
+
+.theme-paper .toggle-btn.active {
+  background-color: var(--paper-blue);
+  box-shadow: 2px 2px 0px var(--paper-ink);
+  font-weight: 700;
+}
+
+/* Sticky Note Toast */
+.theme-paper .toast {
+  background-color: var(--paper-yellow);
+  color: var(--paper-ink);
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: 2px solid var(--paper-ink);
+  border-radius: 4px;
+  box-shadow: 3px 4px 0px var(--paper-ink);
+  padding: 0.85rem 1.4rem;
+  transform: rotate(-1.5deg);
+  position: relative;
+}
+
+.theme-paper .toast::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* ============================================================
+   7. FLOATING AI ASSISTANT (Notebook Mascot Speech Bubble)
+   ============================================================ */
+
+.theme-paper .floating-ai-trigger {
+  background-color: var(--paper-yellow) !important;
+  color: var(--paper-ink) !important;
+  border: 2.5px solid var(--paper-ink);
+  box-shadow: 3px 4px 0px var(--paper-ink);
+  border-radius: 50%;
+}
+
+.theme-paper .floating-ai-trigger:hover {
+  transform: scale(1.1) rotate(6deg);
+  box-shadow: 4px 6px 0px var(--paper-ink);
+}
+
+.theme-paper .ai-chat-window {
+  background-color: var(--paper-surface);
+  border: 2.5px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  box-shadow: var(--paper-shadow-lift);
+}
+
+.theme-paper .ai-chat-header {
+  border-bottom: 2px solid var(--paper-ink);
+  background-color: var(--paper-bg);
+  font-family: var(--paper-font-sketch);
+  font-size: 1.25rem;
+}
+
+.theme-paper .chat-bubble-ai {
+  background-color: var(--paper-blue);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-ink);
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 2px 2px 0px var(--paper-ink);
+  font-family: var(--paper-font-body);
+  font-size: 1.05rem;
+}
+
+.theme-paper .chat-bubble-user {
+  background-color: var(--paper-yellow);
+  color: var(--paper-ink);
+  border: 2px solid var(--paper-ink);
+  border-radius: 18px 18px 4px 18px;
+  box-shadow: 2px 2px 0px var(--paper-ink);
+  font-family: var(--paper-font-body);
+  font-size: 1.05rem;
+}
+
+/* ============================================================
+   8. RESUME & PORTFOLIO BUILDER PAPER SHEETS
+   ============================================================ */
+
+.theme-paper .resume-preview-sheet,
+.theme-paper .portfolio-preview-sheet {
+  background-color: #FFFFFF;
+  border: 2px solid var(--paper-ink);
+  box-shadow: 6px 8px 0px var(--paper-ink);
+  position: relative;
+}
+
+.theme-paper .resume-preview-sheet::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--paper-ink);
+  border-radius: 50%;
+  background-color: var(--paper-bg);
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+
+/* ============================================================
+   9. TEMPLATE CARDS (Resume & Portfolio Selector)
+   ============================================================ */
+
+.theme-paper .templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.theme-paper .template-card {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  box-shadow: var(--paper-shadow-card);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--paper-transition-normal);
+  position: relative;
+}
+
+.theme-paper .template-card:hover {
+  transform: translateY(-4px) rotate(0.6deg);
+  box-shadow: var(--paper-shadow-card-hover);
+}
+
+.theme-paper .template-card.active {
+  background-color: var(--paper-yellow) !important;
+  border-color: var(--paper-ink) !important;
+  box-shadow: 4px 6px 0px var(--paper-ink) !important;
+  transform: rotate(-0.5deg);
+}
+
+.theme-paper .template-card.active::before {
+  content: '★ Selected';
+  position: absolute;
+  top: -12px;
+  right: 10px;
+  background-color: var(--paper-blue);
+  color: var(--paper-ink);
+  font-family: var(--paper-font-sketch);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1.5px solid var(--paper-ink);
+  border-radius: var(--paper-radius-tag);
+  padding: 0.1rem 0.5rem;
+}
+
+.theme-paper .template-card h4 {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.25rem;
+  color: var(--paper-ink);
+  margin-top: 0.5rem;
+}
+
+/* ============================================================
+   10. TABS & BOOKMARK TABS (Profile & Settings)
+   ============================================================ */
+
+.theme-paper .tabs-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2.5px solid var(--paper-ink);
+  padding-bottom: 0;
+  margin-bottom: 1.75rem;
+}
+
+.theme-paper .tab-btn {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--paper-ink);
+  background-color: var(--paper-bg);
+  border: 2px solid var(--paper-ink);
+  border-bottom: none;
+  border-radius: 8px 12px 0 0;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: all var(--paper-transition-fast);
+  position: relative;
+  bottom: -2.5px;
+}
+
+.theme-paper .tab-btn:hover {
+  background-color: var(--paper-yellow);
+  transform: translateY(-2px);
+}
+
+.theme-paper .tab-btn.active {
+  background-color: var(--paper-surface);
+  border-bottom: 2.5px solid var(--paper-surface);
+  box-shadow: 0 -2px 0 var(--paper-ink);
+  font-weight: 700;
+  z-index: 2;
+}
+
+/* ============================================================
+   11. FEATURE CARDS & LANDING PAGE IN PAPER WORLD
+   ============================================================ */
+
+.theme-paper .features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.theme-paper .feature-card {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  box-shadow: var(--paper-shadow-card);
+  padding: 1.75rem;
+  transition: all var(--paper-transition-normal);
+  position: relative;
+}
+
+.theme-paper .feature-card:hover {
+  transform: translateY(-4px) rotate(-0.4deg);
+  box-shadow: var(--paper-shadow-card-hover);
+}
+
+.theme-paper .feature-icon {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--paper-ink);
+  border-radius: 50%;
+  background-color: var(--paper-blue);
+  color: var(--paper-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  box-shadow: 2px 2px 0px var(--paper-ink);
+}
+
+/* Landing How It Works Steps */
+.theme-paper .steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.theme-paper .step-item {
+  background-color: var(--paper-surface);
+  border: 2px dashed var(--paper-ink);
+  border-radius: var(--paper-radius-card);
+  padding: 1.5rem;
+  position: relative;
+}
+
+.theme-paper .step-number {
+  position: absolute;
+  top: -16px;
+  left: 16px;
+  width: 34px;
+  height: 34px;
+  background-color: var(--paper-yellow);
+  border: 2px solid var(--paper-ink);
+  border-radius: 50%;
+  font-family: var(--paper-font-sketch);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px var(--paper-ink);
+}
+
+/* FAQ Accordion Items */
+.theme-paper .faq-item {
+  background-color: var(--paper-surface);
+  border: 2px solid var(--paper-ink);
+  border-radius: var(--paper-radius-card-alt);
+  box-shadow: 2px 3px 0px var(--paper-ink);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.theme-paper .faq-question {
+  width: 100%;
+  font-family: var(--paper-font-sketch);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--paper-ink);
+  background: none;
+  border: none;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.theme-paper .faq-answer {
+  font-family: var(--paper-font-body);
+  font-size: 1.1rem;
+  color: var(--paper-ink);
+  padding: 0 1.5rem 1.25rem;
+  border-top: 1.5px dashed var(--paper-grid);
+}
+
+/* ============================================================
+   12. SERPENTINE ROADMAP VISUAL ROUTE IN PAPER WORLD
+   ============================================================ */
+
+.theme-paper .route-node-card {
+  background-color: var(--paper-surface) !important;
+  border: 2.5px solid var(--paper-ink) !important;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  box-shadow: 4px 5px 0px var(--paper-ink) !important;
+  color: var(--paper-ink) !important;
+  transition: all var(--paper-transition-normal);
+}
+
+.theme-paper .route-node-card:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 6px 8px 0px var(--paper-ink) !important;
+  background-color: var(--paper-yellow) !important;
+}
+
+.theme-paper .route-node-card.completed {
+  background-color: var(--paper-green) !important;
+  border-color: var(--paper-ink) !important;
+}
+
+.theme-paper .route-node-card.current {
+  background-color: var(--paper-blue) !important;
+  border-color: var(--paper-ink) !important;
+}
+
+.theme-paper .route-node-title {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--paper-ink) !important;
+}
+
+/* ============================================================
+   13. RESUME DOCUMENT A4 SHEET IN PAPER WORLD
+   ============================================================ */
+
+.theme-paper .resume-doc {
+  background-color: #FFFFFF !important;
+  color: #171717 !important;
+  border: 2.5px solid var(--paper-ink) !important;
+  border-radius: 4px !important;
+  box-shadow: 8px 12px 0px var(--paper-ink) !important;
+  position: relative;
+  font-family: var(--paper-font-body);
+}
+
+.theme-paper .resume-doc::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  bottom: 40px;
+  width: 1px;
+  border-left: 1.5px dashed rgba(23, 23, 23, 0.2);
+}
+
+.theme-paper .resume-section-title {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.35rem;
+  border-bottom: 2px solid var(--paper-ink) !important;
+  color: var(--paper-ink) !important;
+}
+
+/* ============================================================
+   14. PUBLIC FOOTER IN PAPER WORLD
+   ============================================================ */
+
+.theme-paper .public-footer {
+  background-color: var(--paper-bg);
+  border-top: 2.5px solid var(--paper-ink);
+  color: var(--paper-ink);
+}
+
+.theme-paper .footer-links a {
+  font-family: var(--paper-font-sketch);
+  font-size: 1.15rem;
+  color: var(--paper-ink);
+  text-decoration: none;
+}
+
+.theme-paper .footer-links a:hover {
+  text-decoration: underline;
+  color: var(--paper-blue-dark);
+}
+
+
+/* Ensure inline colors from legacy views adapt cleanly to ink in Paper World */
+.theme-paper .feature-card h3,
+.theme-paper .feature-card div[style*="color: #a5b4fc"] {
+  color: var(--paper-ink) !important;
+  font-family: var(--paper-font-sketch);
+}
+
+.theme-paper h3[style*="color: #a5b4fc"] {
+  color: var(--paper-ink) !important;
+  font-family: var(--paper-font-sketch);
+}
+
+.theme-paper [style*="color: #a5b4fc"] {
+  color: var(--paper-pencil) !important;
+}
+
+.theme-paper .welcome-banner [style*="color: #a5b4fc"] {
+  color: var(--paper-ink) !important;
+}
+
+
+/* Fix landing hero title span clip so text is crisp ink inside marker */
+.theme-paper .hero-title span,
+.theme-paper .hero-title .highlight-blue {
+  background: var(--paper-blue-marker) !important;
+  -webkit-text-fill-color: var(--paper-ink) !important;
+  color: var(--paper-ink) !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  padding: 0.1em 0.5em !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}
+
+
+/* ============================================================
+   15. STRICT PROFESSIONAL PREVIEW ISOLATION FOR RESUME & PORTFOLIO
+   Prevents Paper theme handwritten fonts/sketch borders from
+   affecting the actual live document preview.
+   Must remain clean, crisp, and professional (Inter font, clean borders).
+   ============================================================ */
+
+.theme-paper .preview-container {
+  background-color: #0b0f19 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  transform: none !important;
+}
+
+.theme-paper .preview-toolbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.theme-paper .preview-toolbar .btn,
+.theme-paper .preview-toolbar .device-btn {
+  font-family: 'Inter', -apple-system, sans-serif !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.theme-paper .preview-viewport,
+.theme-paper #resume-preview-viewport,
+.theme-paper #portfolio-preview-viewport {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
+  transform: none !important;
+}
+
+/* Force professional typography & clean layouts inside Resume Preview */
+.theme-paper #resume-preview-viewport,
+.theme-paper #resume-preview-viewport *,
+.theme-paper .resume-doc,
+.theme-paper .resume-doc * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: normal !important;
+}
+
+.theme-paper .resume-doc {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  line-height: 1.5 !important;
+}
+
+.theme-paper .resume-doc::before {
+  display: none !important;
+}
+
+.theme-paper .resume-header {
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-bottom: 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.theme-paper .resume-header h1 {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.02em !important;
+  text-decoration: none !important;
+  margin: 0 !important;
+}
+
+.theme-paper .resume-contact-line {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.85rem !important;
+  color: #64748b !important;
+}
+
+.theme-paper .resume-section-title {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-bottom: 0.35rem !important;
+  margin-bottom: 0.75rem !important;
+  color: #0f172a !important;
+}
+
+.theme-paper .resume-section p,
+.theme-paper .resume-item-sub {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.95rem !important;
+  color: #334155 !important;
+  line-height: 1.6 !important;
+}
+
+.theme-paper .skill-tag-item {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  padding: 0.25rem 0.65rem !important;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.theme-paper .resume-item-header {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+}
+
+/* Force professional typography & clean layouts inside Portfolio Preview */
+.theme-paper #portfolio-preview-viewport,
+.theme-paper #portfolio-preview-viewport *,
+.theme-paper .portfolio-project-card,
+.theme-paper .portfolio-container,
+.theme-paper .portfolio-hero {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: normal !important;
+}
+
+.theme-paper #portfolio-preview-viewport .badge,
+.theme-paper #portfolio-preview-viewport .btn {
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border-radius: 6px !important;
+}
+
+
+.theme-paper .preview-toolbar,
+.theme-paper .preview-toolbar span,
+.theme-paper .preview-toolbar div {
+  color: #f8fafc !important;
+}

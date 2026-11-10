@@ -6,3 +6,22 @@ dump/
 backup*/
 *.dump
 
+# Agent tooling directories (AI coding assistants — not project source)
+.agent/
+.agents/
+.gemini/
+.gsd/
+.playwright-mcp/
+
+# Test artifacts and E2E output
+test-results/
+
+# OS / editor artifacts
+Thumbs.db
+.vscode/settings.json
+.idea/
+
+# Build outputs
+dist/
+build/
+

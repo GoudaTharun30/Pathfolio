@@ -9,19 +9,25 @@ const ProjectsView = {
   activeModalProject: null,
 
   async render() {
-    // 1. Fetch existing roadmaps from single source of truth
+    // 1. Fetch existing roadmaps from single source of truth if not already loaded
     try {
-      this.roadmaps = await API.request('/roadmaps');
+      if (!this.roadmaps || !this.roadmaps.length) {
+        this.roadmaps = await API.request('/roadmaps');
+      }
+      if (!this.selectedRoadmap && this.roadmaps.length) {
+        this.selectedRoadmap = this.roadmaps[0];
+      } else if (this.selectedRoadmap) {
+        this.selectedRoadmap = this.roadmaps.find(r => r.slug === this.selectedRoadmap.slug) || this.selectedRoadmap;
+      }
+    } catch (e) {
+      this.roadmaps = this.roadmaps || [];
       if (!this.selectedRoadmap && this.roadmaps.length) {
         this.selectedRoadmap = this.roadmaps[0];
       }
-    } catch (e) {
-      this.roadmaps = [];
-      this.selectedRoadmap = null;
     }
 
     // 2. Fetch projects for selected roadmap
-    if (this.selectedRoadmap) {
+    if (this.selectedRoadmap && (!this.projects.length || this.projects[0]?.roadmapSlug !== this.selectedRoadmap.slug)) {
       await this.fetchProjectsForRoadmap(this.selectedRoadmap.slug);
     }
 
@@ -114,9 +120,33 @@ const ProjectsView = {
   },
 
   async onRoadmapChange(slug) {
-    this.selectedRoadmap = this.roadmaps.find(r => r.slug === slug);
+    if (!this.roadmaps || !this.roadmaps.length) {
+      try {
+        this.roadmaps = await API.request('/roadmaps');
+      } catch (e) {
+        this.roadmaps = [];
+      }
+    }
+    this.selectedRoadmap = this.roadmaps.find(r => r.slug === slug) || { slug, title: slug };
+    
+    // Provide instant feedback in projects list
+    const listContainer = document.getElementById('projects-list-container');
+    if (listContainer) {
+      listContainer.innerHTML = `
+        <div class="card" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.75rem;"></i>
+          <p>Loading projects for <strong>${this.selectedRoadmap.title || slug}</strong>...</p>
+        </div>
+      `;
+    }
+    
     await this.fetchProjectsForRoadmap(slug);
-    app.renderCurrentView();
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.innerHTML = await this.render();
+    } else if (window.app && typeof app.renderCurrentView === 'function') {
+      app.renderCurrentView();
+    }
   },
 
   renderProjectsGrid() {
@@ -316,6 +346,9 @@ const ProjectsView = {
       </div>
     `;
 
+    if (window.paperTransitions && typeof paperTransitions.openComponent === 'function') {
+      paperTransitions.openComponent(body);
+    }
     modal.classList.add('active');
   },
 
@@ -333,3 +366,5 @@ const ProjectsView = {
     }
   }
 };
+
+window.ProjectsView = ProjectsView;

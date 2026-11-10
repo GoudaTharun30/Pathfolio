@@ -24,26 +24,33 @@ const getRecommendedProjects = async (req, res, next) => {
       roadmapSlug = 'frontend-developer';
     }
 
-    let allProjects = [];
+    let matchedProjects = [];
     if (useMemoryStore) {
-      if (!memoryStore.projectRecommendations || !memoryStore.projectRecommendations.length) {
-        memoryStore.projectRecommendations = seedData.projects;
+      if (!memoryStore.projectRecommendations || memoryStore.projectRecommendations.length < seedData.projects.length) {
+        memoryStore.projectRecommendations = [...seedData.projects];
       }
-      allProjects = [...memoryStore.projectRecommendations];
+      matchedProjects = memoryStore.projectRecommendations.filter(p => p.roadmapSlug === roadmapSlug);
     } else {
-      allProjects = await ProjectRecommendation.find();
-      if (!allProjects.length) {
-        await ProjectRecommendation.insertMany(seedData.projects);
-        allProjects = await ProjectRecommendation.find();
+      // 1. Query DB for the requested roadmapSlug
+      matchedProjects = await ProjectRecommendation.find({ roadmapSlug });
+
+      // 2. If DB doesn't have projects for this roadmap yet, populate from seedData.projects
+      if (!matchedProjects.length) {
+        const seedMatches = (seedData.projects || []).filter(p => p.roadmapSlug === roadmapSlug);
+        if (seedMatches.length) {
+          try {
+            await ProjectRecommendation.insertMany(seedMatches, { ordered: false });
+            matchedProjects = await ProjectRecommendation.find({ roadmapSlug });
+          } catch (insertErr) {
+            matchedProjects = seedMatches;
+          }
+        }
       }
     }
 
-    // Filter projects matching requested roadmapSlug
-    let matchedProjects = allProjects.filter(p => p.roadmapSlug === roadmapSlug);
-
-    // Fallback if requested slug has no projects: fetch default frontend-developer projects
-    if (!matchedProjects.length) {
-      matchedProjects = allProjects.filter(p => p.roadmapSlug === 'frontend-developer');
+    // 3. If still no projects in DB, use seedData directly
+    if (!matchedProjects || !matchedProjects.length) {
+      matchedProjects = (seedData.projects || []).filter(p => p.roadmapSlug === roadmapSlug);
     }
 
     // Sort by recommendedOrder (1 to 5)
@@ -64,7 +71,11 @@ const getProjectById = async (req, res, next) => {
     if (useMemoryStore) {
       project = (memoryStore.projectRecommendations || seedData.projects).find(p => p.slug === id || p._id === id);
     } else {
-      project = await ProjectRecommendation.findOne({ $or: [{ slug: id }, { _id: id }] });
+      project = await ProjectRecommendation.findOne({ $or: [{ slug: id }, { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }].filter(Boolean) });
+    }
+
+    if (!project) {
+      project = (seedData.projects || []).find(p => p.slug === id);
     }
 
     if (!project) {

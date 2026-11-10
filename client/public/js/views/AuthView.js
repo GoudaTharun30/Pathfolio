@@ -5,7 +5,8 @@ const AuthView = {
   renderLogin() {
     return `
       <div class="container" style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
-        <div class="card" style="width: 100%; max-width: 440px;">
+        <div class="card paper-fold" style="width: 100%; max-width: 440px; position: relative;">
+          <div class="washi-tape-top" aria-hidden="true"></div>
           <div style="text-align: center; margin-bottom: 2rem;">
             <div class="logo" style="justify-content: center; margin-bottom: 0.75rem;">
               <i class="fa-solid fa-compass"></i> Pathfolio<span>.</span>
@@ -51,7 +52,8 @@ const AuthView = {
   renderRegister() {
     return `
       <div class="container" style="min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
-        <div class="card" style="width: 100%; max-width: 460px;">
+        <div class="card paper-fold" style="width: 100%; max-width: 460px; position: relative;">
+          <div class="washi-tape-top" aria-hidden="true"></div>
           <div style="text-align: center; margin-bottom: 2rem;">
             <div class="logo" style="justify-content: center; margin-bottom: 0.75rem;">
               <i class="fa-solid fa-compass"></i> Pathfolio<span>.</span>

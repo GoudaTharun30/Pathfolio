@@ -8,6 +8,11 @@
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts: Handwritten & Sketch Typographies -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Gaegu:wght@400;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/main.css">
@@ -15,6 +20,14 @@
   <link rel="stylesheet" href="/css/landing.css">
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/templates.css">
+
+  <!-- Isolated Paper World Theme Architecture -->
+  <link rel="stylesheet" href="/css/paper/paper-variables.css">
+  <link rel="stylesheet" href="/css/paper/paper-theme.css">
+  <link rel="stylesheet" href="/css/paper/paper-components.css">
+  <link rel="stylesheet" href="/css/paper/paper-animations.css">
+  <link rel="stylesheet" href="/css/paper/paper-crunch.css">
+  <link rel="stylesheet" href="/css/paper/paper-responsive.css">
 </head>
 <body>
 
@@ -47,6 +60,11 @@
         <li><a href="#features" onclick="app.scrollToSection('features')">Features</a></li>
         <li><a href="#how-it-works" onclick="app.scrollToSection('how-it-works')">How It Works</a></li>
         <li><a href="#faq" onclick="app.scrollToSection('faq')">FAQ</a></li>
+        <li>
+          <button class="btn btn-secondary btn-sm" onclick="themeManager.toggleThemeStyle()" title="Switch Paper World / Original Mode">
+            <i class="fa-solid fa-scroll"></i> Paper World
+          </button>
+        </li>
         <li>
           <button class="btn btn-secondary btn-sm" onclick="app.toggleThemeMode()" title="Toggle Light/Dark Mode">
             <i class="fa-solid fa-circle-half-stroke"></i> Mode
@@ -118,6 +136,9 @@
           <span class="page-title" id="page-title-heading">Dashboard</span>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
+          <button class="btn btn-secondary btn-sm" onclick="themeManager.toggleThemeStyle()" title="Switch Paper World / Original Mode">
+            <i class="fa-solid fa-scroll"></i> <span>Paper World</span>
+          </button>
           <button class="btn btn-secondary btn-sm" onclick="app.toggleThemeMode()" title="Toggle Light/Dark Mode">
             <i class="fa-solid fa-circle-half-stroke"></i>
           </button>
@@ -179,6 +200,15 @@
     src="https://trusted-eel-5481.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" 
     type="text/javascript">
   </script>
+
+  <!-- Three.js CDN for Lightweight 3D Educational Objects -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Paper World Signature Interaction Modules -->
+  <script src="/js/paper/paperCrunch.js"></script>
+  <script src="/js/paper/paperDecorations.js"></script>
+  <script src="/js/paper/paperTransitions.js"></script>
+  <script src="/js/paper/paper3D.js"></script>
 
   <!-- Frontend JavaScript Code Modules -->
   <script src="/js/services/api.js"></script>
